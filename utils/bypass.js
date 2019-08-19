@@ -29,7 +29,7 @@ const buildContent = (document, url) => {
   [].forEach.call(bad, b => b.remove());
 
   const source = document.createElement('p');
-  source.innerHTML = `Original article: <a href="${url}"">${url}</a>.`;
+  source.innerHTML = `<a href="${url}"">${url}</a>.`;
   node.prepend(source);
 
   return domToNode(node).children.filter(m => !m.trim || m.trim().length > 0);
@@ -43,9 +43,14 @@ module.exports = async url => {
 
   const content = buildContent(document, url);
   const title = cleanHtmlText(ld.headline);
+  let premium = '';
+  if (ld.hasPart && ld.hasPart.isAccessibleForFree) {
+    premium = ' Premium';
+  }
+  const authorName = cleanHtmlText(`${ld.author.name} &bull; ${ld.publisher.name}${premium}`);
 
   const account = await telegraph.createAccount({
-    author_name: ld.author.name,
+    author_name: authorName,
     author_url: url,
     short_name: ld.author.name
   });

@@ -1,46 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const bypass = require('./utils/bypass');
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/', async (req, res, next) => {
+app.post('/', async (req, res) => {
   const url = await bypass(req.body.url);
   if (req.body.redirect) {
-    res.redirect(url);
-    return next();
+    return res.redirect(url);
   }
-  res.send(url);
-  return next();
+  return res.send(url);
 });
 
 app.get('/', async (req, res) => {
-  res.send(`<html><body><pre>
-
-  <form action="/" method="POST" accept-charset="UTF-8">
-	  <input name="url" pattern="https:\/\/(www\.)?nzherald\.co\.nz/.*" />
-	  <button type="submit">Get Link</button>
-	  <button value="true" name="redirect" type="submit">Redirect</button>
-	</form>
-</pre></body></html>`);
+  if (req.query.url) {
+    return res.redirect(await bypass(req.query.url));
+  }
+  return res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-app.get('*', async (req, res, next) => {
+app.get('*', async (req, res) => {
   const queryString = Object.keys(req.query)
     .map(k => `${k}=${req.query[k]}`)
     .join('&');
 
-  const path = req.path.substring(1);
-  const host = !/^https?:\/\/(www\.)?nzherald.co.nz/.test(path) ? 'https://www.nzherald.co.nz' : '';
-
-  const url = await bypass(host + path + '?' + queryString);
-  res.redirect(url);
-  return next();
+  const url = await bypass(req.path.substring(1) + '?' + queryString);
+  return res.redirect(url);
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

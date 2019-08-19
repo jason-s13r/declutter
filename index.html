@@ -1,0 +1,60 @@
+<html>
+
+<head>
+	<title>NZH Outline</title>
+	<style>
+		body {
+			margin: 0.5rem auto;
+			max-width: 42rem;
+			font: 1.2em/1.62 sans-serif;
+		}
+
+		h1,
+		h2 {
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		h2 {
+			font-size: 1rem;
+			font-style: oblique;
+			font-weight: normal;
+		}
+
+		p {
+			text-align: center;
+			font-size: 0.75rem;
+		}
+
+		input {
+			display: block;
+			box-sizing: border-box;
+			width: 100%;
+			padding: 0.5rem;
+			font-size: 1.5rem;
+			margin: 2rem auto;
+		}
+
+		button {
+			display: block;
+			margin: 1rem auto;
+			font-size: 2rem;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>NZH Outline</h1>
+	<h2>Remove the clutter</h2>
+	<form action="/" method="POST" accept-charset="UTF-8">
+		<input name="url" pattern="https:\/\/(www\.)?nzherald\.co\.nz/.*" placeholder="Enter article link" />
+		<button value="true" name="redirect" type="submit">Outline</button>
+	</form>
+	<p>
+		Pictures, video, polls and other <em>rich content</em> are unlikely to be displayed.
+		<br />
+		No article content is stored or hosted by NZH Outline.
+	</p>
+</body>
+
+</html>
