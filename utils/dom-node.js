@@ -9,10 +9,10 @@ module.exports = function domToNode(domNode) {
   nodeElement.tag = domNode.tagName.toLowerCase();
   for (var i = 0; i < domNode.attributes.length; i++) {
     var attr = domNode.attributes[i];
-    if (attr.name == 'href' || attr.name == 'src') {
-      if (!nodeElement.attrs) {
-        nodeElement.attrs = {};
-      }
+    if (!nodeElement.attrs) {
+      nodeElement.attrs = {};
+    }
+    if ('href src data-srcset alt srcset'.includes(attr.name)) {
       nodeElement.attrs[attr.name] = attr.value;
     }
   }
