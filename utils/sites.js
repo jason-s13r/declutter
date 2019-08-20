@@ -1,5 +1,31 @@
 module.exports = [
   {
+    host: /(www\.)?newsroom\.co\.nz/,
+    publisher: 'Newsroom',
+    premium: '',
+    selectors: {
+      authorName: '.content-author a h3',
+      content: '.article_content',
+      title: 'h1',
+      publisher: '',
+      premium: '',
+      bad: 'h1'
+    }
+  },
+  {
+    host: /(www\.)?noted\.co\.nz/,
+    publisher: 'Noted',
+    premium: '',
+    selectors: {
+      authorName: '.article-container .author',
+      content: '.article-container',
+      title: '.article-container h1',
+      publisher: '',
+      premium: '',
+      bad: '.article-details,.article-byline,.tag-list-content,.article-social-share'
+    }
+  },
+  {
     host: /(www\.)?nzherald\.co\.nz/,
     publisher: 'NZ Herald',
     premium: ' Premium',
@@ -10,19 +36,6 @@ module.exports = [
       publisher: '.syndicator-name',
       premium: '.premium-content',
       bad: '.related-header,.related-articles-container,.ad-container'
-    }
-  },
-  {
-    host: /(www\.)?stuff\.co\.nz/,
-    publisher: 'Stuff',
-    premium: '',
-    selectors: {
-      authorName: '.sics-component__byline__author',
-      content: '.sics-component__story',
-      title: 'h1',
-      publisher: '.sics-component__story__source',
-      premium: '',
-      bad: '.sics-component__story__source,.sics-component__sharebar'
     }
   },
   {
@@ -39,16 +52,16 @@ module.exports = [
     }
   },
   {
-    host: /(www\.)?newsroom\.co\.nz/,
-    publisher: 'Newsroom',
+    host: /(www\.)?stuff\.co\.nz/,
+    publisher: 'Stuff',
     premium: '',
     selectors: {
-      authorName: '.content-author a h3',
-      content: '.article_content',
+      authorName: '.sics-component__byline__author',
+      content: '.sics-component__story',
       title: 'h1',
-      publisher: '',
+      publisher: '.sics-component__story__source',
       premium: '',
-      bad: 'h1'
+      bad: '.sics-component__story__source,.sics-component__sharebar'
     }
   },
   {
@@ -62,19 +75,6 @@ module.exports = [
       publisher: '',
       premium: '',
       bad: '.the-spinoff-club-interruptive,#mc_embed_signup'
-    }
-  },
-  {
-    host: /(www\.)?noted\.co\.nz/,
-    publisher: 'Noted',
-    premium: '',
-    selectors: {
-      authorName: '.article-container .author',
-      content: '.article-container',
-      title: '.article-container h1',
-      publisher: '',
-      premium: '',
-      bad: '.article-details,.article-byline,.tag-list-content,.article-social-share'
     }
   }
 ];
