@@ -18,6 +18,10 @@ const getText = (document, selector) => {
   return node ? node.textContent.trim() : '';
 };
 
+const getAuthorName = (document, selector) => {
+  return getText(document, selector).replace(/^By /i, '');
+};
+
 const getPublisherName = (document, site) => {
   const publisher = getText(document, site.selectors.publisher) || site.publisher;
   if (publisher !== site.publisher) {
@@ -69,7 +73,7 @@ module.exports = async url => {
 
   const content = buildContent(document, site, url);
   const title = getText(document, site.selectors.title);
-  const author = getText(document, site.selectors.authorName);
+  const author = getAuthorName(document, site.selectors.authorName);
   const publisher = getPublisherName(document, site);
   const premium = getPremiumTag(document, site) || '';
   const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s.trim()).join(' &bull; '));

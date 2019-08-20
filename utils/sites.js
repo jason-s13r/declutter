@@ -63,5 +63,18 @@ module.exports = [
       premium: '',
       bad: '.the-spinoff-club-interruptive,#mc_embed_signup'
     }
+  },
+  {
+    host: /(www\.)?noted\.co\.nz/,
+    publisher: 'Noted',
+    premium: '',
+    selectors: {
+      authorName: '.article-container .author',
+      content: '.article-container',
+      title: '.article-container h1',
+      publisher: '',
+      premium: '',
+      bad: '.article-details,.article-byline,.tag-list-content,.article-social-share'
+    }
   }
 ];
