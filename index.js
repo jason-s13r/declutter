@@ -13,27 +13,42 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/favicon.ico', async (req, res) => res.sendStatus(404));
 
 app.post('/', async (req, res) => {
-  const url = await bypass(req.body.url);
-  if (req.body.redirect) {
-    return res.redirect(url);
+  try {
+    const url = await bypass(req.body.url);
+    if (req.body.redirect) {
+      return res.redirect(url);
+    }
+  } catch (e) {
+    res.status(500);
+    res.send(e.message);
   }
   return res.send(url);
 });
 
 app.get('/', async (req, res) => {
-  if (req.query.url) {
-    return res.redirect(await bypass(req.query.url));
+  try {
+    if (req.query.url) {
+      return res.redirect(await bypass(req.query.url));
+    }
+  } catch (e) {
+    res.status(500);
+    res.send(e.message);
   }
   return res.sendFile(path.join(__dirname, '/index.html'));
 });
 
 app.get('*', async (req, res) => {
-  const queryString = Object.keys(req.query)
-    .map(k => `${k}=${req.query[k]}`)
-    .join('&');
+  try {
+    const queryString = Object.keys(req.query)
+      .map(k => `${k}=${req.query[k]}`)
+      .join('&');
 
-  const url = await bypass(req.path.substring(1) + '?' + queryString);
-  return res.redirect(url);
+    const url = await bypass(req.path.substring(1) + '?' + queryString);
+    return res.redirect(url);
+  } catch (e) {
+    res.status(500);
+    res.send(e.message);
+  }
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
