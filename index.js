@@ -19,8 +19,9 @@ app.post('/', async (req, res) => {
       return res.redirect(url);
     }
   } catch (e) {
+    console.error(e);
     res.status(500);
-    res.send(e.message);
+    res.send(e);
   }
   return res.send(url);
 });

@@ -11,6 +11,9 @@ const cleanHtmlText = text => {
 };
 
 const getText = (document, selector) => {
+  if (!selector) {
+    return '';
+  }
   const node = selector.split(',').reduce((p, s) => p || document.querySelector(s), null);
   return node ? node.textContent.trim() : '';
 };
@@ -29,8 +32,8 @@ const getPremiumTag = (document, site) => {
 
 const buildContent = (document, site, url) => {
   const node = document.querySelector(site.selectors.content).cloneNode({ deep: true });
-  Array.from(node.querySelectorAll(site.selectors.bad))
-    .concat(Array.from(node.querySelectorAll('meta,script,style')))
+  Array.from(node.querySelectorAll('meta,script,style'))
+    .concat(site.selectors.bad ? Array.from(node.querySelectorAll(site.selectors.bad)) : [])
     .forEach(b => b.remove());
 
   const source = document.createElement('p');
