@@ -40,6 +40,21 @@ const buildContent = (document, site, url) => {
   source.innerHTML = `<a href="${url}"">${url}</a>.`;
   node.prepend(source);
 
+  const host = url
+    .split('/')
+    .slice(0, 3)
+    .join('/');
+  Array.from(node.querySelectorAll('[src^="/"]'))
+    .filter(e => /^\/[^\/]/.test(e.attributes.src.value))
+    .forEach(e => {
+      e.attributes.src.value = `${host}${e.attributes.src.value}`;
+    });
+  Array.from(node.querySelectorAll('[href^="/"]'))
+    .filter(e => /^\/[^\/]/.test(e.attributes.href.value))
+    .forEach(e => {
+      e.attributes.href.value = `${host}${e.attributes.href.value}`;
+    });
+
   return domToNode(node).children.filter(m => !m.trim || m.trim().length > 0);
 };
 
@@ -49,7 +64,7 @@ module.exports = async url => {
 
   const site = sites.find(s => s.host.test(url));
   if (!site) {
-    throw new Error('unknown website');
+    throw new Error('Unsupported website');
   }
 
   const content = buildContent(document, site, url);

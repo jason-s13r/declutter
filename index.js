@@ -19,11 +19,14 @@ app.post('/', async (req, res) => {
       return res.redirect(url);
     }
   } catch (e) {
+    if (e.message === 'Unsupported website') {
+      res.status(400);
+      return res.send(`<pre>Unsupported website.\nURL=${req.body.url}</pre>`);
+    }
     console.error(e);
-    res.status(500);
-    res.send(e);
+    return res.sendStatus(500);
   }
-  return res.send(url);
+  return res.sendFile(path.join(__dirname, '/error.html'));
 });
 
 app.get('/', async (req, res) => {
@@ -32,23 +35,30 @@ app.get('/', async (req, res) => {
       return res.redirect(await bypass(req.query.url));
     }
   } catch (e) {
-    res.status(500);
-    res.send(e.message);
+    if (e.message === 'Unsupported website') {
+      res.status(400);
+      return res.send(`<pre>Unsupported website.\nURL=${req.query.url}</pre>`);
+    }
+    return res.sendStatus(500);
   }
   return res.sendFile(path.join(__dirname, '/index.html'));
 });
 
 app.get('*', async (req, res) => {
-  try {
-    const queryString = Object.keys(req.query)
-      .map(k => `${k}=${req.query[k]}`)
-      .join('&');
+  const queryString = Object.keys(req.query)
+    .map(k => `${k}=${req.query[k]}`)
+    .join('&');
 
-    const url = await bypass(req.path.substring(1) + '?' + queryString);
-    return res.redirect(url);
+  const url = req.path.substring(1) + '?' + queryString;
+
+  try {
+    return res.redirect(await bypass(url));
   } catch (e) {
-    res.status(500);
-    res.send(e.message);
+    if (e.message === 'Unsupported website') {
+      res.status(400);
+      return res.send(`<pre>Unsupported website.\nURL=${url}</pre>`);
+    }
+    return res.sendStatus(500);
   }
 });
 

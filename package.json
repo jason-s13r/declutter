@@ -1,7 +1,7 @@
 {
-  "name": "nzhp",
+  "name": "declutter",
   "version": "1.0.0",
-  "description": "",
+  "description": "Removes the clutter from various New Zealand news websites and creates a page for the article on telegra.ph.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
