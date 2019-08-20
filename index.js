@@ -10,6 +10,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.get('/favicon.ico', async (req, res) => res.sendStatus(404));
+
 app.post('/', async (req, res) => {
   const url = await bypass(req.body.url);
   if (req.body.redirect) {
