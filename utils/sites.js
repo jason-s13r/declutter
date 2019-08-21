@@ -54,7 +54,7 @@ module.exports = [
       title: 'h1',
       publisher: '.syndicator-name',
       premium: '.premium-content',
-      bad: '.related-header,.related-articles-container,.ad-container'
+      bad: '.related-header,.related-articles-container,.ad-container,.video-js :not(video)'
     },
     timeout: 60000,
     waitUntil: 'networkidle0'

@@ -114,6 +114,7 @@ module.exports = async url => {
 
   const browser = await puppeteer.launch();
   const tab = await browser.newPage();
+  await tab.setUserAgent('Googlebot/2.1 (+http://www.google.com/bot.html)');
   await tab.setViewport({ width: 2000, height: 10000 });
   await tab.goto(url, { timeout: site.timeout, waitUntil: site.waitUntil });
   if (site.publisher === 'NZ Herald') {
