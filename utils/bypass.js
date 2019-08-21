@@ -1,89 +1,78 @@
-const { JSDOM } = require('jsdom');
+module.exports = async tab => {
+  await tab.evaluate(() => {
+    (function() {
+      const loopParse = (json, iterations) => {
+        try {
+          return JSON.parse(json);
+        } catch (e) {
+          let column = 0;
+          let m = e.message.match(/position (\d+) ?/);
+          if (m) {
+            column = Number(m[1]);
+          } else {
+            m = e.message.match(/column (\d+) ?/);
+            column = Number(m[1]) - 1;
+          }
+          const left = json.substring(0, column).replace(/,$/, '');
+          const right = json.substring(column + 1);
+          if (iterations <= 0) {
+            return null;
+          }
+          return loopParse(left + right, iterations - 1);
+        }
+      };
+      const ldParse = text => {
+        const input = text.replace(/[\r\n]/g, '');
+        const schemaInput = input.replace(/[\ ]/g, '');
+        const schema = loopParse(schemaInput, schemaInput.length + 1);
+        const json = loopParse(input, input.length + 1);
+        if (!json) {
+          return schema;
+        }
+        if (!schema) {
+          return json;
+        }
+        return {
+          ...json,
+          '@context': schema['@context'],
+          '@type': schema['@type']
+        };
+      };
+      const ld = Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
+        .map(e => ldParse(e.textContent))
+        .find(l => {
+          if (!l) {
+            return false;
+          }
+          const isSchema = l['@context'] === 'http://schema.org';
+          const isArticle = l['@type'] === 'Article';
+          const hasPart = l.hasOwnProperty('hasPart');
+          return isSchema && isArticle && hasPart;
+        });
 
-const telegraph = require('./telegraph');
-const domToNode = require('./dom-node');
-const sites = require('./sites');
+      const content = document.querySelector('.premium-content');
 
-const cleanHtmlText = text => {
-  const s = new JSDOM('').window.document.createElement('span');
-  s.innerHTML = text;
-  return s.textContent;
-};
+      if (!ld || !content) {
+        return;
+      }
 
-const getText = (document, selector) => {
-  if (!selector) {
-    return '';
-  }
-  const node = selector.split(',').reduce((p, s) => p || document.querySelector(s), null);
-  return node ? node.textContent.trim() : '';
-};
+      const selector = ld.hasPart.cssSelector;
+      const inserted = content.parentElement.insertBefore(content.cloneNode(true), content);
+      const [displayed, hidden] = [content, inserted];
 
-const getAuthorName = (document, selector) => {
-  return getText(document, selector).replace(/^By /i, '');
-};
+      displayed.style.marginBottom = '75px';
+      displayed.removeAttribute('id');
+      displayed.classList.replace('premium-content', 'full-content');
+      Array.from(displayed.querySelectorAll(selector)).forEach(e => {
+        e.classList.remove(selector.substring(1));
+        e.style = '';
+      });
 
-const getPublisherName = (document, site) => {
-  const publisher = getText(document, site.selectors.publisher) || site.publisher;
-  if (publisher !== site.publisher) {
-    return `${publisher} via ${site.publisher}`;
-  }
-  return publisher;
-};
-
-const getPremiumTag = (document, site) => {
-  return site.selectors.premium && !!document.querySelector(site.selectors.premium) ? site.premium : '';
-};
-
-const buildContent = (document, site, url) => {
-  const node = document.querySelector(site.selectors.content).cloneNode({ deep: true });
-  Array.from(node.querySelectorAll('meta,script,style'))
-    .concat(site.selectors.bad ? Array.from(node.querySelectorAll(site.selectors.bad)) : [])
-    .forEach(b => b.remove());
-
-  const source = document.createElement('p');
-  source.innerHTML = `<a href="${url}"">${url}</a>.`;
-  node.prepend(source);
-
-  const host = url
-    .split('/')
-    .slice(0, 3)
-    .join('/');
-  Array.from(node.querySelectorAll('[src^="/"]'))
-    .filter(e => /^\/[^\/]/.test(e.attributes.src.value))
-    .forEach(e => {
-      e.attributes.src.value = `${host}${e.attributes.src.value}`;
-    });
-  Array.from(node.querySelectorAll('[href^="/"]'))
-    .filter(e => /^\/[^\/]/.test(e.attributes.href.value))
-    .forEach(e => {
-      e.attributes.href.value = `${host}${e.attributes.href.value}`;
-    });
-
-  return domToNode(node).children.filter(m => !m.trim || m.trim().length > 0);
-};
-
-module.exports = async url => {
-  const DOM = await JSDOM.fromURL(url);
-  const document = DOM.window.document;
-
-  const site = sites.find(s => s.host.test(url));
-  if (!site) {
-    throw new Error('Unsupported website');
-  }
-
-  const content = buildContent(document, site, url);
-  const title = getText(document, site.selectors.title);
-  const author = getAuthorName(document, site.selectors.authorName);
-  const publisher = getPublisherName(document, site);
-  const premium = getPremiumTag(document, site) || '';
-  const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s.trim()).join(' &bull; '));
-
-  const account = await telegraph.createAccount({
-    author_name: authorName,
-    author_url: url,
-    short_name: author || site.publisher
+      hidden.style.opacity = 0.1;
+      hidden.style.height = '1px';
+      hidden.style.overflow = 'hidden';
+    })();
   });
-  const page = await telegraph.createPage(title, content, account);
-
-  return page.url;
+  await tab.waitFor(2000);
+  await tab.waitForSelector('.full-content .loaded');
 };

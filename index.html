@@ -66,19 +66,85 @@
 			background: #f1f1f1;
 			vertical-align: middle;
 		}
+
+		.loading,
+		.is-loading form,
+		.is-loading form+p,
+		.is-loading .error {
+			display: none;
+		}
+
+		.is-loading .loading {
+			display: block;
+			text-align: center;
+			margin: 5rem auto;
+		}
+
+		.error {
+			display: none;
+		}
+
+		.is-error .error {
+			padding: 0;
+			color: darkred;
+			display: block;
+			width: 100%;
+			text-align: center;
+		}
 	</style>
 </head>
 
 <body>
 	<h1>Declutter</h1>
 	<h2>Keep <em>only</em> what matters.</h2>
-	<form action="/" method="POST" accept-charset="UTF-8"><input name="url" placeholder="Enter article link" /><button
-			value="true" name="redirect" type="submit">view</button></form>
+	<div class="loading">
+		<img src="/loading.svg" alt="loading..." width="200" height="200" />
+	</div>
+	<h3 class="error">ERROR</h3>
+	<form action="/" method="POST" accept-charset="UTF-8"><input required name="url"
+			placeholder="Enter article link" /><button value="true" name="redirect" type="submit">view</button></form>
 	<p>
 		Pictures, video, polls and other <em>rich content</em> are unlikely to be displayed.
 		<br />
 		No article content is stored or hosted by Declutter.
 	</p>
+	<script>
+		document.querySelector('form').addEventListener('submit', e => {
+			e.preventDefault();
+			document.querySelector('html').classList.add('is-loading');
+			document.querySelector('html').classList.remove('is-error');
+			fetch('/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					url: e.target.url.value
+				})
+			})
+				.then(response => {
+					if (response.ok) {
+						return response.text();
+					}
+					throw response.status;
+				})
+				.then(url => {
+					window.location = url;
+				}).catch(status => {
+					let message = 'ERROR';
+
+					switch (status) {
+						case 400:
+							message = 'Unsupported website.';
+							break;
+					}
+
+					document.querySelector('.error').innerText = message;
+					document.querySelector('html').classList.add('is-error');
+					document.querySelector('html').classList.remove('is-loading');
+				});
+		});
+	</script>
 </body>
 
 </html>

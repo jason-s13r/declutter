@@ -6,6 +6,7 @@ https://declutter.1j.nz
 
 ## Supported websites
 
+- Newshub
 - Newsroom
 - Noted
 - NZ Herald

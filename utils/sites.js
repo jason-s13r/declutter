@@ -1,5 +1,20 @@
 module.exports = [
   {
+    host: /(www\.)?newshub\.co\.nz/,
+    publisher: 'Newshub',
+    premium: '',
+    selectors: {
+      authorName: 'article .c-ArticleHeader-authorName',
+      content: 'article .c-ArticleBody',
+      title: 'article h1.c-ArticleHeader-title',
+      publisher: '',
+      premium: '',
+      bad: '.AdWrapper,.video-js :not(video)'
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
+  },
+  {
     host: /(www\.)?newsroom\.co\.nz/,
     publisher: 'Newsroom',
     premium: '',
@@ -10,7 +25,9 @@ module.exports = [
       publisher: '',
       premium: '',
       bad: 'h1'
-    }
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
   },
   {
     host: /(www\.)?noted\.co\.nz/,
@@ -23,7 +40,9 @@ module.exports = [
       publisher: '',
       premium: '',
       bad: '.article-details,.article-byline,.tag-list-content,.article-social-share'
-    }
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
   },
   {
     host: /(www\.)?nzherald\.co\.nz/,
@@ -31,12 +50,14 @@ module.exports = [
     premium: ' Premium',
     selectors: {
       authorName: '.author-title,.author span',
-      content: '.full-content,.premium-content',
+      content: '.full-content',
       title: 'h1',
       publisher: '.syndicator-name',
       premium: '.premium-content',
       bad: '.related-header,.related-articles-container,.ad-container'
-    }
+    },
+    timeout: 60000,
+    waitUntil: 'networkidle0'
   },
   {
     host: /(www\.)?r(adio)?nz\.co\.nz/,
@@ -49,7 +70,9 @@ module.exports = [
       publisher: '.prog-name',
       premium: '',
       bad: ''
-    }
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
   },
   {
     host: /(www\.)?stuff\.co\.nz/,
@@ -61,8 +84,16 @@ module.exports = [
       title: 'h1',
       publisher: '.sics-component__story__source',
       premium: '',
-      bad: '.sics-component__story__source,.sics-component__sharebar'
-    }
+      bad: [
+        '.sics-component__story__source',
+        '.sics-component__sharebar',
+        '.bigbyline-container',
+        '.video-js :not(video)',
+        '.display-ad--border-container'
+      ].join(',')
+    },
+    timeout: 60000,
+    waitUntil: 'networkidle0'
   },
   {
     host: /(www\.)?thespinoff\.co\.nz/,
@@ -75,6 +106,8 @@ module.exports = [
       publisher: '',
       premium: '',
       bad: '.the-spinoff-club-interruptive,#mc_embed_signup'
-    }
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
   }
 ];

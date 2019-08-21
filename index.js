@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const bypass = require('./utils/bypass');
+const declutter = require('./utils/declutter');
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
@@ -11,34 +11,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/favicon.ico', async (req, res) => res.sendStatus(404));
+app.get('/loading.svg', async (req, res) => res.sendFile(path.join(__dirname, '/loading.svg')));
 
 app.post('/', async (req, res) => {
   try {
-    const url = await bypass(req.body.url);
+    const url = await declutter(req.body.url);
     if (req.body.redirect) {
       return res.redirect(url);
     }
+    return res.send(url);
   } catch (e) {
-    if (e.message === 'Unsupported website') {
-      res.status(400);
-      return res.send(`<pre>Unsupported website.\nURL=${req.body.url}</pre>`);
+    switch (e.message) {
+      case 'Unsupported website':
+        return res.sendStatus(400);
     }
-    console.error(e);
+    console.error(e.message);
     return res.sendStatus(500);
   }
-  return res.sendFile(path.join(__dirname, '/error.html'));
 });
 
 app.get('/', async (req, res) => {
   try {
     if (req.query.url) {
-      return res.redirect(await bypass(req.query.url));
+      return res.redirect(await declutter(req.query.url));
     }
   } catch (e) {
-    if (e.message === 'Unsupported website') {
-      res.status(400);
-      return res.send(`<pre>Unsupported website.\nURL=${req.query.url}</pre>`);
+    switch (e.message) {
+      case 'Unsupported website':
+        return res.sendStatus(400);
     }
+    console.error(e.message);
     return res.sendStatus(500);
   }
   return res.sendFile(path.join(__dirname, '/index.html'));
@@ -52,12 +54,13 @@ app.get('*', async (req, res) => {
   const url = req.path.substring(1) + '?' + queryString;
 
   try {
-    return res.redirect(await bypass(url));
+    return res.redirect(await declutter(url));
   } catch (e) {
-    if (e.message === 'Unsupported website') {
-      res.status(400);
-      return res.send(`<pre>Unsupported website.\nURL=${url}</pre>`);
+    switch (e.message) {
+      case 'Unsupported website':
+        return res.sendStatus(400);
     }
+    console.error(e.message);
     return res.sendStatus(500);
   }
 });
