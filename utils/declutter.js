@@ -115,14 +115,14 @@ const fixRelativeLinks = async (tab, url) => {
 
 const buildReadableContent = async (tab, url) => {
   const document = new JSDOM(await tab.content(), { url }).window.document;
-  const reader = new Readability(document);
-  const dom = new JSDOM(`<html><body>${reader.parse().content}</body></html>`);
+  const article = new Readability(document).parse();
+  const dom = new JSDOM(`<html><body>${article.content}</body></html>`);
   const div = dom.window.document.querySelector('div');
   const source = dom.window.document.createElement('p');
   source.innerHTML = `<a href="${url}"">${url}</a>.`;
   div.prepend(source);
   content = domToNode(div).children.filter(m => !m.trim || m.trim().length > 0);
-  return content;
+  return { content, title: article.title };
 };
 
 module.exports = async url => {
@@ -140,21 +140,12 @@ module.exports = async url => {
   await bypass(tab, url);
 
   let premium = '';
-  let content = '';
-  let { title, author, publisher } = await tab.evaluate(url => {
-    const titleSelector = [
-      'meta[property="og:title"]',
-      'meta[property="twitter:title"]',
-      'meta[property="title"]'
-    ].join(',');
-    const $title = document.querySelector(titleSelector);
-    const $publisher = document.querySelector('meta[property="og:site_name"]');
-    return {
-      title: $title && $title.content ? $title.content : '',
-      author: $publisher && $publisher.content ? $publisher.content : '',
-      publisher: new URL(url).host
-    };
-  }, url);
+  let publisher = new URL(url).host;
+  let { content, title } = await buildReadableContent(tab, url);
+  let author = await tab.evaluate(() => {
+    const $author = document.querySelector('meta[property="og:site_name"]');
+    return $author && $author.content ? $author.content : '';
+  });
 
   if (site) {
     const meta = await Promise.all([
@@ -169,11 +160,9 @@ module.exports = async url => {
     author = meta[2];
     publisher = meta[3];
     premium = meta[4] || '';
-  } else {
-    content = await buildReadableContent(tab, url);
   }
 
-  const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s.trim()).join(' &bull; '));
+  const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s && !!s.trim()).join(' &bull; '));
 
   await tab.close();
   await browser.close();
