@@ -126,55 +126,60 @@ const buildReadableContent = async (tab, url) => {
 };
 
 module.exports = async url => {
-  const site = sites.find(s => s.host.test(url));
-
   const browser = await puppeteer.launch();
   const tab = await browser.newPage();
-  await tab.setUserAgent('Googlebot/2.1 (+http://www.google.com/bot.html)');
-  await tab.setViewport({ width: 2000, height: 10000 });
-  await tab.goto(url, {
-    timeout: site ? site.timeout : 30000,
-    waitUntil: site ? site.waitUntil : 'domcontentloaded'
-  });
-  await fixRelativeLinks(tab, url);
-  await bypass(tab, url);
+  try {
+    const site = sites.find(s => s.host.test(url));
 
-  let premium = '';
-  let { content, title } = await buildReadableContent(tab, url);
-  let { author, publisher } = await tab.evaluate(url => {
-    const $author = document.querySelector('meta[property="og:site_name"]');
-    return {
-      author: $author && $author.content ? $author.content : '',
-      publisher: new URL(url).host
-    };
-  }, url);
+    await tab.setViewport({ width: 2000, height: 10000 });
+    await tab.goto(url, {
+      timeout: site ? site.timeout : 60000,
+      waitUntil: site ? site.waitUntil : 'networkidle0'
+    });
+    await fixRelativeLinks(tab, url);
+    await bypass(tab, url);
 
-  if (site) {
-    const meta = await Promise.all([
-      buildContent(tab, site, url),
-      getText(tab, site.selectors.title),
-      getAuthorName(tab, site.selectors.authorName),
-      getPublisherName(tab, site),
-      getPremiumTag(tab, site)
-    ]);
-    content = meta[0];
-    title = meta[1];
-    author = meta[2];
-    publisher = meta[3];
-    premium = meta[4] || '';
+    let premium = '';
+    let { content, title } = await buildReadableContent(tab, url);
+    let { author, publisher } = await tab.evaluate(url => {
+      const $author = document.querySelector('meta[property="og:site_name"]');
+      return {
+        author: $author && $author.content ? $author.content : '',
+        publisher: new URL(url).host
+      };
+    }, url);
+
+    if (site) {
+      const meta = await Promise.all([
+        buildContent(tab, site, url),
+        getText(tab, site.selectors.title),
+        getAuthorName(tab, site.selectors.authorName),
+        getPublisherName(tab, site),
+        getPremiumTag(tab, site)
+      ]);
+      content = meta[0];
+      title = meta[1];
+      author = meta[2];
+      publisher = meta[3];
+      premium = meta[4] || '';
+    }
+
+    await tab.close();
+    await browser.close();
+
+    const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s && !!s.trim()).join(' &bull; '));
+
+    const account = await telegraph.createAccount({
+      author_name: authorName,
+      author_url: url,
+      short_name: (author || publisher || authorName).substring(0, 31)
+    });
+    const page = await telegraph.createPage(title, content, account);
+
+    return page.url;
+  } catch (e) {
+    await tab.close();
+    await browser.close();
+    throw e;
   }
-
-  const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s && !!s.trim()).join(' &bull; '));
-
-  await tab.close();
-  await browser.close();
-
-  const account = await telegraph.createAccount({
-    author_name: authorName,
-    author_url: url,
-    short_name: (author || publisher || authorName).substring(0, 31)
-  });
-  const page = await telegraph.createPage(title, content, account);
-
-  return page.url;
 };
