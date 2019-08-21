@@ -1,6 +1,8 @@
 const { JSDOM } = require('jsdom');
 const puppeteer = require('puppeteer');
+const Readability = require('readability');
 
+const domToNode = require('./dom-node');
 const telegraph = require('./telegraph');
 const sites = require('./sites');
 const bypass = require('./bypass');
@@ -57,21 +59,6 @@ const buildContent = async (tab, site, url) => {
       source.innerHTML = `<a href="${url}"">${url}</a>.`;
       node.prepend(source);
 
-      const host = url
-        .split('/')
-        .slice(0, 3)
-        .join('/');
-      Array.from(node.querySelectorAll('[src^="/"]'))
-        .filter(e => /^\/[^\/]/.test(e.attributes.src.value))
-        .forEach(e => {
-          e.attributes.src.value = `${host}${e.attributes.src.value}`;
-        });
-      Array.from(node.querySelectorAll('[href^="/"]'))
-        .filter(e => /^\/[^\/]/.test(e.attributes.href.value))
-        .forEach(e => {
-          e.attributes.href.value = `${host}${e.attributes.href.value}`;
-        });
-
       function domToNode(domNode) {
         if (domNode.nodeType == domNode.TEXT_NODE) {
           return domNode.data;
@@ -106,32 +93,95 @@ const buildContent = async (tab, site, url) => {
   );
 };
 
+const fixRelativeLinks = async (tab, url) => {
+  return await tab.evaluate(url => {
+    const host = url
+      .split('/')
+      .slice(0, 3)
+      .join('/');
+
+    Array.from(document.querySelectorAll('[src^="/"]'))
+      .filter(e => e.attributes.src && /^\/[^\/]/.test(e.attributes.src.value))
+      .forEach(e => {
+        e.attributes.src.value = `${host}${e.attributes.src.value}`;
+      });
+    Array.from(document.querySelectorAll('[href^="/"]'))
+      .filter(e => e.attributes.href && /^\/[^\/]/.test(e.attributes.href.value))
+      .forEach(e => {
+        e.attributes.href.value = `${host}${e.attributes.href.value}`;
+      });
+  }, url);
+};
+
+const buildReadableContent = async (tab, url) => {
+  const document = new JSDOM(await tab.content(), { url }).window.document;
+  const reader = new Readability(document);
+  const dom = new JSDOM(`<html><body>${reader.parse().content}</body></html>`);
+  const div = dom.window.document.querySelector('div');
+  const source = dom.window.document.createElement('p');
+  source.innerHTML = `<a href="${url}"">${url}</a>.`;
+  div.prepend(source);
+  content = domToNode(div).children.filter(m => !m.trim || m.trim().length > 0);
+  return content;
+};
+
 module.exports = async url => {
   const site = sites.find(s => s.host.test(url));
-  if (!site) {
-    throw new Error('Unsupported website');
-  }
 
   const browser = await puppeteer.launch();
   const tab = await browser.newPage();
   await tab.setUserAgent('Googlebot/2.1 (+http://www.google.com/bot.html)');
   await tab.setViewport({ width: 2000, height: 10000 });
-  await tab.goto(url, { timeout: site.timeout, waitUntil: site.waitUntil });
-  if (site.publisher === 'NZ Herald') {
-    await bypass(tab);
+  await tab.goto(url, {
+    timeout: site ? site.timeout : 30000,
+    waitUntil: site ? site.waitUntil : 'domcontentloaded'
+  });
+  await fixRelativeLinks(tab, url);
+  await bypass(tab, url);
+
+  let premium = '';
+  let content = '';
+  let { title, author, publisher } = await tab.evaluate(url => {
+    const titleSelector = [
+      'meta[property="og:title"]',
+      'meta[property="twitter:title"]',
+      'meta[property="title"]'
+    ].join(',');
+    const $title = document.querySelector(titleSelector);
+    const $publisher = document.querySelector('meta[property="og:site_name"]');
+    return {
+      title: $title && $title.content ? $title.content : '',
+      author: $publisher && $publisher.content ? $publisher.content : '',
+      publisher: new URL(url).host
+    };
+  }, url);
+
+  if (site) {
+    const meta = await Promise.all([
+      buildContent(tab, site, url),
+      getText(tab, site.selectors.title),
+      getAuthorName(tab, site.selectors.authorName),
+      getPublisherName(tab, site),
+      getPremiumTag(tab, site)
+    ]);
+    content = meta[0];
+    title = meta[1];
+    author = meta[2];
+    publisher = meta[3];
+    premium = meta[4] || '';
+  } else {
+    content = await buildReadableContent(tab, url);
   }
 
-  const content = await buildContent(tab, site, url);
-  const title = await getText(tab, site.selectors.title);
-  const author = await getAuthorName(tab, site.selectors.authorName);
-  const publisher = await getPublisherName(tab, site);
-  const premium = (await getPremiumTag(tab, site)) || '';
   const authorName = cleanHtmlText([author, publisher + premium].filter(s => !!s.trim()).join(' &bull; '));
+
+  await tab.close();
+  await browser.close();
 
   const account = await telegraph.createAccount({
     author_name: authorName,
     author_url: url,
-    short_name: author || site.publisher
+    short_name: (author || publisher || authorName).substring(0, 31)
   });
   const page = await telegraph.createPage(title, content, account);
 

@@ -29,7 +29,7 @@ const declutterRequest = async (res, url, redirect) => {
       case 'Unsupported website':
         return res.sendStatus(400);
     }
-    console.error(e.message);
+    console.error(e);
     return res.sendStatus(500);
   }
 };

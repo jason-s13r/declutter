@@ -1,4 +1,7 @@
-module.exports = async tab => {
+module.exports = async (tab, url) => {
+  if (!/^https?:\/\/(www.)?nzherald\.co\.nz/.test(url)) {
+    return;
+  }
   await tab.evaluate(() => {
     (function() {
       const loopParse = (json, iterations) => {

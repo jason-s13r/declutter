@@ -10,9 +10,12 @@ https://declutter.1j.nz
 - Newsroom
 - Noted
 - NZ Herald
+- Otago Daily Times
 - Radio NZ
 - Stuff
 - The Spinoff
+
+Others: fallback provided using [Readability.js](https://github.com/mozilla/readability).
 
 ## License
 

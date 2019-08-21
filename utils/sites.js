@@ -109,5 +109,30 @@ module.exports = [
     },
     timeout: 30000,
     waitUntil: 'domcontentloaded'
+  },
+  {
+    host: /(www\.)?odt\.co\.nz/,
+    publisher: 'Otago Daily Times',
+    premium: '',
+    selectors: {
+      authorName: '.byline a,.byline',
+      content: 'article.node-story ',
+      title: 'h1.page-header',
+      publisher: '',
+      premium: '',
+      bad: [
+        '.pane-odt-promotion-promoted-items',
+        '.breadcrumb-wrapper',
+        '.share-icons-header',
+        '.sharethis-buttons',
+        '.byline,header',
+        'footer',
+        '#related-stories',
+        '.comment-count-footer',
+        '.comment-wrapper'
+      ].join(',')
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
   }
 ];
