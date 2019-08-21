@@ -140,11 +140,13 @@ module.exports = async url => {
   await bypass(tab, url);
 
   let premium = '';
-  let publisher = new URL(url).host;
   let { content, title } = await buildReadableContent(tab, url);
-  let author = await tab.evaluate(() => {
+  let { author, publisher } = await tab.evaluate(() => {
     const $author = document.querySelector('meta[property="og:site_name"]');
-    return $author && $author.content ? $author.content : '';
+    return {
+      author: $author && $author.content ? $author.content : '',
+      publisher: new URL(url).host
+    };
   });
 
   if (site) {
