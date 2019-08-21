@@ -13,38 +13,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/favicon.ico', async (req, res) => res.sendStatus(404));
 app.get('/loading.svg', async (req, res) => res.sendFile(path.join(__dirname, '/loading.svg')));
 
-app.post('/', async (req, res) => {
-  try {
-    const url = await declutter(req.body.url);
-    if (req.body.redirect) {
-      return res.redirect(url);
-    }
-    return res.send(url);
-  } catch (e) {
-    switch (e.message) {
-      case 'Unsupported website':
-        return res.sendStatus(400);
-    }
-    console.error(e.message);
-    return res.sendStatus(500);
-  }
-});
-
 app.get('/', async (req, res) => {
-  try {
-    if (req.query.url) {
-      return res.redirect(await declutter(req.query.url));
-    }
-  } catch (e) {
-    switch (e.message) {
-      case 'Unsupported website':
-        return res.sendStatus(400);
-    }
-    console.error(e.message);
-    return res.sendStatus(500);
-  }
   return res.sendFile(path.join(__dirname, '/index.html'));
 });
+
+const declutterRequest = async (res, url, redirect) => {
+  try {
+    const telegraph = await declutter(url);
+    if (redirect) {
+      return res.redirect(telegraph);
+    }
+    return res.send(telegraph);
+  } catch (e) {
+    switch (e.message) {
+      case 'Unsupported website':
+        return res.sendStatus(400);
+    }
+    console.error(e.message);
+    return res.sendStatus(500);
+  }
+};
+
+app.post('/', async (req, res) => await declutterRequest(res, req.body.url, !!req.body.redirect));
 
 app.get('*', async (req, res) => {
   const queryString = Object.keys(req.query)
@@ -53,16 +43,7 @@ app.get('*', async (req, res) => {
 
   const url = req.path.substring(1) + '?' + queryString;
 
-  try {
-    return res.redirect(await declutter(url));
-  } catch (e) {
-    switch (e.message) {
-      case 'Unsupported website':
-        return res.sendStatus(400);
-    }
-    console.error(e.message);
-    return res.sendStatus(500);
-  }
+  return await declutterRequest(res, url, false);
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Declutter app listening on port ${port}!`));

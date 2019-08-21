@@ -144,6 +144,21 @@
 					document.querySelector('html').classList.remove('is-loading');
 				});
 		});
+
+		(function () {
+			const query = window.location.search.substring(1).split('&').reduce((m, p) => {
+				const [key, value] = p.split('=')
+				return ({
+					...m,
+					[key]: decodeURIComponent(value)
+				});
+			}, {});
+			if (!query.url) {
+				return;
+			}
+			document.querySelector('input[name="url"]').value = query.url;
+			document.querySelector('button').click();
+		})();
 	</script>
 </body>
 
