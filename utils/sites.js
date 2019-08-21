@@ -69,7 +69,7 @@ module.exports = [
       title: 'h1',
       publisher: '.prog-name',
       premium: '',
-      bad: ''
+      bad: '.c-play-controller'
     },
     timeout: 30000,
     waitUntil: 'domcontentloaded'
