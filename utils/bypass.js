@@ -76,6 +76,7 @@ module.exports = async (tab, url) => {
       hidden.style.overflow = 'hidden';
     })();
   });
-  await tab.waitFor(2000);
-  await tab.waitForSelector('.full-content .loaded');
+  if (await tab.$('.full-content .responsively-lazy:not(.loaded)')) {
+    await tab.waitForSelector('.full-content .loaded', { timeout: 60000 });
+  }
 };
