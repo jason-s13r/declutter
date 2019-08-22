@@ -1,7 +1,8 @@
 body {
   margin: 3.5rem auto 0.5rem;
-  max-width: 42rem;
+  max-width: 40rem;
   font: 1.2em/1.62 sans-serif;
+  text-align: center;
 }
 
 h1,
@@ -17,19 +18,17 @@ h2 {
   font-weight: normal;
 }
 
-p {
-  text-align: center;
-  font-size: 0.7rem;
-  margin: 0 auto 1.5rem;
-}
-
 form {
   text-align: center;
   width: 95%;
   border: solid 1px #aaa;
   margin: 8rem auto 0.5rem;
-  border-radius: 3px;
+  border-radius: 5px;
   overflow: hidden;
+}
+
+form:focus-within {
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.25);
 }
 
 input {
@@ -63,17 +62,29 @@ button {
   vertical-align: middle;
 }
 
+footer {
+  margin: 0 auto 1.25rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+footer p {
+  text-align: center;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
 .loading,
 .is-loading form,
-.is-loading form + p,
+.is-loading form + footer,
 .is-loading .error {
   display: none;
 }
 
 .is-loading .loading {
   display: block;
-  text-align: center;
-  margin: 5rem auto;
+  margin: 3.5rem auto 0;
 }
 
 .error {
@@ -81,9 +92,13 @@ button {
 }
 
 .is-error .error {
+  box-sizing: border-box;
+  height: 3rem;
   padding: 0;
+  margin: 0;
   color: darkred;
   display: block;
-  width: 100%;
-  text-align: center;
+}
+.is-error form {
+  margin-top: 5rem;
 }

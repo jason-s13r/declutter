@@ -11,17 +11,15 @@
 <body>
 	<h1>Declutter</h1>
 	<h2>Keep <em>only</em> what matters.</h2>
-	<div class="loading">
-		<img src="/loading.svg" alt="loading..." width="200" height="200" />
-	</div>
+	<img class="loading" src="/loading.svg" alt="loading..." width="200" height="200" />
 	<h3 class="error">ERROR</h3>
-	<form action="/" method="POST" accept-charset="UTF-8"><input required name="url"
-			placeholder="Enter article link" /><button value="true" name="redirect" type="submit">view</button></form>
-	<p>
-		Pictures, video, polls and other <em>rich content</em> are unlikely to be displayed.
-		<br />
-		No article content is stored or hosted by Declutter.
-	</p>
+	<form action="/" method="POST" accept-charset="UTF-8" autocomplete="off"><input name="url"
+			placeholder="Enter article link" pattern="^https?:\/\/(www\.)?.*" required /><button value="true"
+			name="redirect" type="submit">view</button>
+	</form>
+	<footer>
+		<p>No article content is stored or hosted by Declutter.</p>
+	</footer>
 	<script src="/script.js" type="text/javascript"></script>
 </body>
 
