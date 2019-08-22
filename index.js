@@ -18,18 +18,20 @@ app.get('/', async (req, res) => res.sendFile(path.join(__dirname, '/public/inde
 
 const declutterRequest = async (res, url, redirect) => {
   try {
+    if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
+      return res.status(400);
+    }
     const telegraph = await declutter(url);
     if (redirect) {
       return res.redirect(telegraph);
     }
     return res.send(telegraph);
   } catch (e) {
-    switch (e.message) {
-      case 'Unsupported website':
-        return res.sendStatus(400);
+    if (/timeout/i.test(e.message)) {
+      return res.status(504);
     }
     console.error(e);
-    return res.sendStatus(500);
+    return res.status(500);
   }
 };
 

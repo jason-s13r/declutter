@@ -16,21 +16,13 @@
         if (response.ok) {
           return response.text();
         }
-        throw response.status;
+        throw response.statusText;
       })
       .then(url => {
         window.location = url;
       })
       .catch(status => {
-        let message = 'ERROR';
-
-        switch (status) {
-          case 400:
-            message = 'Unsupported website.';
-            break;
-        }
-
-        document.querySelector('.error').innerText = message;
+        document.querySelector('.error').innerText = status.replace(/Gateway/i, '').trim();
         document.querySelector('html').classList.add('is-error');
         document.querySelector('html').classList.remove('is-loading');
       });

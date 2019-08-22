@@ -132,6 +132,7 @@ module.exports = async url => {
     const site = sites.find(s => s.host.test(url));
 
     await tab.setViewport({ width: 2000, height: 10000 });
+    await tab.setUserAgent('Twitterbot/1.0');
     await tab.goto(url, {
       timeout: site ? site.timeout : 60000,
       waitUntil: site ? site.waitUntil : 'networkidle0'
