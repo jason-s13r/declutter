@@ -134,5 +134,20 @@ module.exports = [
     },
     timeout: 30000,
     waitUntil: 'domcontentloaded'
+  },
+  {
+    host: /(www\.)?theguardian\.com/,
+    publisher: 'The Guardian',
+    premium: '',
+    selectors: {
+      authorName: '.byline',
+      content: '.content__article-body',
+      title: 'h1.content__headline',
+      publisher: '',
+      premium: '',
+      bad: ['.contributions__epic', 'aside', '.submeta'].join(',')
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
   }
 ];
