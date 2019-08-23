@@ -1,4 +1,5 @@
 # Ignore Mac system files
 node_modules
+extensions
 .DS_store
 *.zip

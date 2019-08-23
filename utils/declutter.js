@@ -1,6 +1,9 @@
 const { JSDOM } = require('jsdom');
 const puppeteer = require('puppeteer');
 const Readability = require('readability');
+const path = require('path');
+const fs = require('fs');
+const util = require('util');
 
 const domToNode = require('./dom-node');
 const telegraph = require('./telegraph');
@@ -125,14 +128,32 @@ const buildReadableContent = async (tab, url) => {
   return { content, title: article.title };
 };
 
+const getExtensions = async () => {
+  const extensionDir = path.join(__dirname, '../extensions');
+  const exists = await util.promisify(fs.exists)(extensionDir);
+  if (!exists) {
+    return [];
+  }
+  const ls = await util.promisify(fs.readdir)(extensionDir);
+  const extensions = ls.map(name => '--load-extension=' + path.join(extensionDir, name));
+  return extensions;
+};
+
+const UA = site => {
+  if (!site || !site.userAgent) {
+    return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36';
+  }
+  return site.userAgent;
+};
+
 module.exports = async url => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: true, args: [].concat(await getExtensions()) });
   const tab = await browser.newPage();
   try {
     const site = sites.find(s => s.host.test(url));
 
     await tab.setViewport({ width: 2000, height: 10000 });
-    await tab.setUserAgent('Twitterbot/1.0');
+    await tab.setUserAgent(UA(site));
     await tab.goto(url, {
       timeout: site ? site.timeout : 60000,
       waitUntil: site ? site.waitUntil : 'networkidle0'

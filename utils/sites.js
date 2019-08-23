@@ -1,5 +1,6 @@
 module.exports = [
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?newshub\.co\.nz/,
     publisher: 'Newshub',
     premium: '',
@@ -15,6 +16,7 @@ module.exports = [
     waitUntil: 'domcontentloaded'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?newsroom\.co\.nz/,
     publisher: 'Newsroom',
     premium: '',
@@ -30,6 +32,7 @@ module.exports = [
     waitUntil: 'domcontentloaded'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?noted\.co\.nz/,
     publisher: 'Noted',
     premium: '',
@@ -45,6 +48,7 @@ module.exports = [
     waitUntil: 'domcontentloaded'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?nzherald\.co\.nz/,
     publisher: 'NZ Herald',
     premium: ' Premium',
@@ -60,6 +64,7 @@ module.exports = [
     waitUntil: 'networkidle0'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?r(adio)?nz\.co\.nz/,
     publisher: 'Radio NZ',
     premium: '',
@@ -75,6 +80,7 @@ module.exports = [
     waitUntil: 'domcontentloaded'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?stuff\.co\.nz/,
     publisher: 'Stuff',
     premium: '',
@@ -96,6 +102,7 @@ module.exports = [
     waitUntil: 'networkidle0'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?thespinoff\.co\.nz/,
     publisher: 'The Spinoff',
     premium: '',
@@ -111,6 +118,7 @@ module.exports = [
     waitUntil: 'domcontentloaded'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?odt\.co\.nz/,
     publisher: 'Otago Daily Times',
     premium: '',
@@ -136,6 +144,7 @@ module.exports = [
     waitUntil: 'domcontentloaded'
   },
   {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     host: /(www\.)?theguardian\.com/,
     publisher: 'The Guardian',
     premium: '',
