@@ -147,7 +147,8 @@ const UA = site => {
 };
 
 module.exports = async url => {
-  const browser = await puppeteer.launch({ headless: true, args: [].concat(await getExtensions()) });
+  const extensions = await getExtensions();
+  const browser = await puppeteer.launch({ headless: true, args: [].concat(extensions) });
   const tab = await browser.newPage();
   try {
     const site = sites.find(s => s.host.test(url));
@@ -160,9 +161,9 @@ module.exports = async url => {
     });
     await fixRelativeLinks(tab, url);
     await bypass(tab, url);
+    await tab.waitFor(extensions.length > 0 ? 3000 : 1000);
 
-    let premium = '';
-    let { content, title } = await buildReadableContent(tab, url);
+    let [premium, content, title] = ['', '', ''];
     let { author, publisher } = await tab.evaluate(url => {
       const $author = document.querySelector('meta[property="og:site_name"]');
       return {
@@ -170,6 +171,12 @@ module.exports = async url => {
         publisher: new URL(url).host
       };
     }, url);
+
+    if (!site) {
+      const readable = await buildReadableContent(tab, url);
+      title = readable.title;
+      content = readable.content;
+    }
 
     if (site) {
       const meta = await Promise.all([
