@@ -54,8 +54,7 @@ module.exports = async url => {
   const extensions = await getExtensions();
   const browser = await puppeteer.launch({
     args: [].concat(extensions),
-    executablePath:
-      process.env.DECLUTTER_CHROME_PATH || 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\Chrome.exe',
+    executablePath: process.env.DECLUTTER_CHROME_PATH,
     headless: true
   });
   const tab = await browser.newPage();
@@ -63,7 +62,7 @@ module.exports = async url => {
     const streams = [];
 
     tab.on('request', request => {
-      if (/(master)?\.m3u8/.test(request.url())) {
+      if (/(master)\.m3u8/.test(request.url())) {
         streams.push(request.url());
       }
     });
@@ -78,6 +77,10 @@ module.exports = async url => {
     });
     await fixRelativeLinks(tab, url);
     await tab.waitFor(extensions.length > 0 ? 3000 : 1000);
+    await tab.evaluate(() => {
+      Array.from(document.querySelectorAll('[class*="play"]')).forEach(e => e && e.click && e.click());
+    });
+    await tab.waitFor(2000);
 
     let { title, author, publisher } = await tab.evaluate(url => {
       const $author = document.querySelector('meta[property="og:site_name"]');
