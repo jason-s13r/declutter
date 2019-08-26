@@ -1,6 +1,6 @@
 body {
   margin: 3.5rem auto 0.5rem;
-  width: 40rem;
+  max-width: 40rem;
   font: 1.2em/1.62 sans-serif;
   text-align: center;
 }
