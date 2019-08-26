@@ -1,8 +1,17 @@
 body {
   margin: 3.5rem auto 0.5rem;
-  max-width: 40rem;
+  width: 40rem;
   font: 1.2em/1.62 sans-serif;
   text-align: center;
+}
+
+.is-playing.is-fullwidth body {
+  width: 100%;
+}
+
+.is-dark {
+  background: #222;
+  color: #fff;
 }
 
 h1,
@@ -62,6 +71,18 @@ button {
   vertical-align: middle;
 }
 
+.is-dark input {
+  background: #333;
+  color: #fff;
+}
+.is-dark button {
+  background: #222;
+  color: #fff;
+}
+.is-dark .loading {
+  filter: invert();
+}
+
 footer {
   margin: 0 auto 1.25rem;
   position: absolute;
@@ -101,4 +122,28 @@ footer p {
 }
 .is-error form {
   margin-top: 5rem;
+}
+
+.is-playing body {
+  margin: 1rem auto;
+}
+
+.is-playing form,
+.player {
+  display: none;
+}
+
+.is-playing .player {
+  display: initial;
+
+  min-width: 100%;
+}
+
+.is-playing .video-js {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
 }

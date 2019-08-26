@@ -7,7 +7,7 @@ const util = require('util');
 
 const domToNode = require('./dom-node');
 const telegraph = require('./telegraph');
-const sites = require('./sites');
+const sites = require('./config/sites');
 const bypass = require('./bypass');
 
 const cleanHtmlText = text => {
@@ -148,7 +148,11 @@ const UA = site => {
 
 module.exports = async url => {
   const extensions = await getExtensions();
-  const browser = await puppeteer.launch({ headless: true, args: [].concat(extensions) });
+  const browser = await puppeteer.launch({
+    args: [].concat(extensions),
+    executablePath: process.env.DECLUTTER_CHROME_PATH || undefined,
+    headless: true
+  });
   const tab = await browser.newPage();
   try {
     const site = sites.find(s => s.host.test(url));
