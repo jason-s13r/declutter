@@ -141,7 +141,7 @@ const getExtensions = async () => {
 
 const UA = site => {
   if (!site || !site.userAgent) {
-    return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36';
+    return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36';
   }
   return site.userAgent;
 };
@@ -161,7 +161,7 @@ module.exports = async url => {
     await tab.setUserAgent(UA(site));
     await tab.goto(url, {
       timeout: site ? site.timeout : 60000,
-      waitUntil: site ? site.waitUntil : 'networkidle0'
+      waitUntil: site ? site.waitUntil : 'domcontentloaded'
     });
     await fixRelativeLinks(tab, url);
     await bypass(tab, url);
@@ -211,6 +211,7 @@ module.exports = async url => {
 
     return page.url;
   } catch (e) {
+    console.error(e);
     await tab.close();
     await browser.close();
     throw e;

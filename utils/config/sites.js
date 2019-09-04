@@ -54,14 +54,26 @@ module.exports = [
     premium: ' Premium',
     selectors: {
       authorName: '.author-title,.author span',
-      content: '.full-content',
+      content: '.article-main',
       title: 'h1',
       publisher: '.syndicator-name',
       premium: '.premium-content',
-      bad: '.related-header,.related-articles-container,.ad-container,.video-js :not(video)'
+      bad: [
+        '.related-header',
+        'header .text-wrapper',
+        '.pb-f-global-recommend',
+        '.pb-f-utilities-sharebar',
+        '.pb-f-article-related-articles',
+        '.article-offer',
+        '.bio-with-share',
+        '.premium-content',
+        '.related-articles-container',
+        '.ad-container',
+        '.video-js :not(video)'
+      ].join(',')
     },
     timeout: 60000,
-    waitUntil: 'networkidle0'
+    waitUntil: 'domcontentloaded'
   },
   {
     userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
@@ -155,6 +167,22 @@ module.exports = [
       publisher: '',
       premium: '',
       bad: ['.contributions__epic', 'aside', '.submeta'].join(',')
+    },
+    timeout: 30000,
+    waitUntil: 'domcontentloaded'
+  },
+  {
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
+    host: /(www\.)?interest\.co\.nz/,
+    publisher: 'Interest.co.nz',
+    premium: '',
+    selectors: {
+      authorName: 'article .by-line .author-name',
+      content: 'article #content',
+      title: 'article .views-field-field-short-headline, article .story-long-headline',
+      publisher: 'article .posted-in',
+      premium: '',
+      bad: '#related-tags'
     },
     timeout: 30000,
     waitUntil: 'domcontentloaded'
