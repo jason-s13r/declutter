@@ -100,7 +100,7 @@ module.exports = async (url) => {
     }
   });
   await tab.addInitScript({
-    path: "./bypass/src/js/contentScript.js",
+    path: "utils/contentScript.js",
   });
 
   try {
