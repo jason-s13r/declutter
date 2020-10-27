@@ -1,3 +1,6 @@
 [submodule "bypass"]
 	path = bypass
 	url = ./bypass
+[submodule "bypass-paywalls-chrome"]
+	path = bypass-paywalls-chrome
+	url = https://github.com/iamadamdev/bypass-paywalls-chrome.git
