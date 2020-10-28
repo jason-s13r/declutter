@@ -1,6 +1,6 @@
 module.exports = function domToNode(domNode) {
   if (domNode.nodeType == domNode.TEXT_NODE) {
-    return domNode.data;
+    return /^\s+$/.test(domNode.data) ? " " : domNode.data;
   }
   if (domNode.nodeType != domNode.ELEMENT_NODE) {
     return false;
@@ -12,7 +12,7 @@ module.exports = function domToNode(domNode) {
     if (!nodeElement.attrs) {
       nodeElement.attrs = {};
     }
-    if ('href src data-srcset alt srcset'.includes(attr.name)) {
+    if ("href src data-srcset alt srcset".includes(attr.name)) {
       nodeElement.attrs[attr.name] = attr.value;
     }
   }

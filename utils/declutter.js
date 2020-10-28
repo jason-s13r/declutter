@@ -67,7 +67,7 @@ const buildReadableContent = async (tab, url) => {
 module.exports = async (url) => {
   const browser = await firefox.launch({
     args: [],
-    executablePath: process.env.DECLUTTER_CHROME_PATH || undefined,
+    executablePath: process.env.DECLUTTER_BROWSER_PATH || undefined,
     headless: false,
   });
 
@@ -91,16 +91,17 @@ module.exports = async (url) => {
     userAgent: userAgent,
     extraHTTPHeaders: extraHTTPHeaders,
   });
-  await tab.route("*", (route) => {
+  await tab.route(/.*/, (route) => {
     const routeUrl = route.request().url();
     const blockedDomains = Object.keys(blockedRegexes);
     const domain = matchUrlDomain(blockedDomains, routeUrl);
     if (domain && routeUrl.match(blockedRegexes[domain])) {
       return route.abort();
     }
+    return route.continue();
   });
   await tab.addInitScript({
-    path: "utils/contentScript.js",
+    path: "bypass-paywalls-chrome/src/js/contentScript.js",
   });
 
   try {

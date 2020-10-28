@@ -33,6 +33,7 @@ module.exports.blockedRegexes = {
   "lesechos.fr": /.+\.tinypass\.com\/.+/,
   "washingtonpost.com": /.+\.washingtonpost\.com\/.+\/pwapi-proxy\.min\.js/,
   "thehindu.com": /ajax\.cloudflare\.com\/cdn-cgi\/scripts\/.+\/cloudflare-static\/rocket-loader\.min\.js/,
+  "technologyreview.com": /.+\.blueconic\.net\/.+/,
 };
 
 module.exports.useGoogleBotSites = [

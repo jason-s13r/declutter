@@ -1,21 +1,14 @@
 # Declutter
 
-Removes the clutter from various New Zealand news websites and creates a page for the article on telegra.ph.
+Removes the clutter from various news websites and creates a page for the article on telegra.ph.
 
 https://declutter.1j.nz
 
 ## Supported websites
 
-- Newshub
-- Newsroom
-- Noted
-- NZ Herald
-- Otago Daily Times
-- Radio NZ
-- Stuff
-- The Spinoff
+Supports practically any website using [Readability.js](https://github.com/mozilla/readability).
 
-Others: fallback provided using [Readability.js](https://github.com/mozilla/readability).
+Includes the ability to [bypass paywalls](https://github.com/iamadamdev/bypass-paywalls-chrome).
 
 ## License
 
