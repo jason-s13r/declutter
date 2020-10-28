@@ -68,7 +68,7 @@ module.exports = async (url) => {
   const browser = await firefox.launch({
     args: [],
     executablePath: process.env.DECLUTTER_BROWSER_PATH || undefined,
-    headless: false,
+    headless: true,
   });
 
   // override User-Agent to use Googlebot
