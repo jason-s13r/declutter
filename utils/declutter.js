@@ -1,6 +1,6 @@
 const { JSDOM } = require("jsdom");
 const { firefox } = require("playwright");
-const Readability = require("readability");
+const { Readability } = require("@mozilla/readability");
 const path = require("path");
 const fs = require("fs");
 const util = require("util");
@@ -179,6 +179,7 @@ module.exports = async (url) => {
     }
     throw new Error("no content");
   } catch (e) {
+    console.error(e);
     throw e;
   } finally {
     await tab.close();
