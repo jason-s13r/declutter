@@ -23,11 +23,14 @@ app.get("/style.css", async (req, res) =>
 app.get("/script.js", async (req, res) =>
   res.sendFile(path.join(__dirname, "/public/script.js"))
 );
+app.get("/keys.js", async (req, res) =>
+  res.sendFile(path.join(__dirname, "/public/keys.js"))
+);
 app.get("/", async (req, res) =>
   res.sendFile(path.join(__dirname, "/public/index.html"))
 );
 
-app.get("/keys", async (req, res) => {
+app.get("/keys.json", async (req, res) => {
   const pages = cache.keys().map((key) => cache.get(key));
   return res.send(pages);
 });

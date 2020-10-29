@@ -1,16 +1,7 @@
 body {
+  margin: 3.5rem auto 0.5rem;
+  width: 40rem;
   font: 1.2em/1.62 sans-serif;
-}
-
-.is-constrained {
-  margin: 3.5rem auto 0.5rem;
-  max-width: 40rem;
-  text-align: center;
-}
-
-.is-centered {
-  margin: 3.5rem auto 0.5rem;
-  max-width: 50vw;
 }
 
 .is-playing.is-fullwidth body {
@@ -92,6 +83,10 @@ footer p {
   margin: 0;
 }
 
+footer p a {
+  color: #000;
+}
+
 .loading,
 .is-loading form,
 .is-loading form + footer,
@@ -121,22 +116,30 @@ footer p {
 }
 
 .submitted-links {
+  margin: 3.5rem auto 0.5rem;
   text-align: justify;
+}
+.submitted-links article:first-child:before {
+  content: "Recent Links";
+  display: block;
 }
 
 .submitted-links article {
   display: block;
   margin: 0.5rem;
-  text-align: left;
 }
 .submitted-links article a.is-title {
+  display: block;
   color: #444;
   margin: 0 0.5rem;
+  font-size: 0.9em;
 }
 .submitted-links article a.is-publisher {
+  display: block;
   color: #aaa;
   margin: 0 0.5rem;
   text-decoration: none;
+  font-size: 0.8em;
 }
 .submitted-links article a.is-publisher:before {
   content: "(";
