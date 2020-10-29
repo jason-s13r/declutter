@@ -20,6 +20,8 @@
       ".c-suggest-links.read-more-links",
       ".website-of-year",
     ]);
+  } else if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
+    removeSelectors([".c-advert-app", ".c-sub-nav"]);
   }
 
   function matchDomain(domains) {
