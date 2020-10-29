@@ -173,7 +173,7 @@ module.exports = async (url) => {
 
     const page = await telegraph.createPage(title, content, account);
     if (page) {
-      return page.url;
+      return page;
     }
     throw new Error("no content");
   } catch (e) {

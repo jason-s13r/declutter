@@ -4,6 +4,7 @@ const path = require("path");
 const NodeCache = require("node-cache");
 
 const declutter = require("./utils/declutter");
+const { url } = require("inspector");
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
@@ -26,6 +27,11 @@ app.get("/", async (req, res) =>
   res.sendFile(path.join(__dirname, "/public/index.html"))
 );
 
+app.get("/keys", async (req, res) => {
+  const pages = cache.keys().map((key) => cache.get(key));
+  return res.send(pages);
+});
+
 app.post("/", async (req, res) => {
   const url = req.body.url;
   const redirect = !!req.body.redirect;
@@ -36,12 +42,18 @@ app.post("/", async (req, res) => {
     let telegraph = cache.get(url);
     if (!telegraph) {
       telegraph = await declutter(url);
-      cache.set(url, telegraph);
+      cache.set(url, {
+        author: telegraph.author,
+        author_url: telegraph.author_url,
+        description: telegraph.description,
+        title: telegraph.title,
+        url: telegraph.url,
+      });
     }
     if (redirect) {
-      return res.redirect(telegraph);
+      return res.redirect(telegraph.url);
     }
-    return res.send(telegraph);
+    return res.send(telegraph.url);
   } catch (e) {
     if (/timeout/i.test(e.message)) {
       return res.status(504);

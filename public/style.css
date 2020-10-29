@@ -1,8 +1,16 @@
 body {
+  font: 1.2em/1.62 sans-serif;
+}
+
+.is-constrained {
   margin: 3.5rem auto 0.5rem;
   max-width: 40rem;
-  font: 1.2em/1.62 sans-serif;
   text-align: center;
+}
+
+.is-centered {
+  margin: 3.5rem auto 0.5rem;
+  max-width: 50vw;
 }
 
 .is-playing.is-fullwidth body {
@@ -71,18 +79,6 @@ button {
   vertical-align: middle;
 }
 
-.is-dark input {
-  background: #333;
-  color: #fff;
-}
-.is-dark button {
-  background: #222;
-  color: #fff;
-}
-.is-dark .loading {
-  filter: invert();
-}
-
 footer {
   margin: 0 auto 1.25rem;
   position: absolute;
@@ -124,26 +120,27 @@ footer p {
   margin-top: 5rem;
 }
 
-.is-playing body {
-  margin: 1rem auto;
+.submitted-links {
+  text-align: justify;
 }
 
-.is-playing form,
-.player {
-  display: none;
+.submitted-links article {
+  display: block;
+  margin: 0.5rem;
+  text-align: left;
 }
-
-.is-playing .player {
-  display: initial;
-
-  min-width: 100%;
+.submitted-links article a.is-title {
+  color: #444;
+  margin: 0 0.5rem;
 }
-
-.is-playing .video-js {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
+.submitted-links article a.is-publisher {
+  color: #aaa;
+  margin: 0 0.5rem;
+  text-decoration: none;
+}
+.submitted-links article a.is-publisher:before {
+  content: "(";
+}
+.submitted-links article a.is-publisher:after {
+  content: ")";
 }
