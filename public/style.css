@@ -1,6 +1,7 @@
 body {
   margin: 3.5rem auto 0.5rem;
   width: 40rem;
+  max-width: 100vw;
   font: 1.2em/1.62 sans-serif;
 }
 
@@ -30,7 +31,7 @@ form {
   text-align: center;
   width: 95%;
   border: solid 1px #aaa;
-  margin: 5rem auto 0.5rem;
+  margin: 3.5rem auto 0.5rem;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -119,7 +120,6 @@ footer p a {
   width: 95%;
   max-width: 95%;
   margin: 3rem auto 0.5rem;
-  text-align: justify;
   overflow-x: clip;
 }
 .submitted-links article:first-child:before {
@@ -132,6 +132,7 @@ footer p a {
   margin: 0.5rem;
 }
 .submitted-links article a.is-title {
+  text-align: justify;
   display: block;
   color: #444;
   margin: 0 0.5rem;
