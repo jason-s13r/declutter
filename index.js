@@ -1,11 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const NodeCache = require("node-cache");
 
 const declutter = require("./utils/declutter");
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
+const cache = new NodeCache();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,7 +33,11 @@ app.post("/", async (req, res) => {
     if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
       return res.status(400);
     }
-    const telegraph = await declutter(url);
+    let telegraph = cache.get(url);
+    if (!telegraph) {
+      telegraph = await declutter(url);
+      cache.set(url, telegraph);
+    }
     if (redirect) {
       return res.redirect(telegraph);
     }
