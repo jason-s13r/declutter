@@ -30,7 +30,7 @@ form {
   text-align: center;
   width: 95%;
   border: solid 1px #aaa;
-  margin: 8rem auto 0.5rem;
+  margin: 5rem auto 0.5rem;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -116,8 +116,11 @@ footer p a {
 }
 
 .submitted-links {
-  margin: 3.5rem auto 0.5rem;
+  width: 95%;
+  max-width: 95%;
+  margin: 3rem auto 0.5rem;
   text-align: justify;
+  overflow-x: clip;
 }
 .submitted-links article:first-child:before {
   content: "Recent Links";

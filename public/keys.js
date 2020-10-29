@@ -11,7 +11,7 @@
         if (!pages) {
           return;
         }
-        const list = pages.reverse().slice(0, 10);
+        const list = pages.reverse();
         const section = document.querySelector("section.submitted-links");
         section.innerHTML = "";
         for (const page of list) {
