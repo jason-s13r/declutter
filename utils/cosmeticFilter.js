@@ -1,4 +1,6 @@
 (function () {
+  removeHiddenElements();
+
   if (matchDomain("stuff.co.nz")) {
     removeSelectors([
       ".support-brief-container",
@@ -47,6 +49,20 @@
     return Array.prototype.filter.call(elements, function (element) {
       return RegExp(text).test(element.textContent);
     });
+  }
+
+  function removeHiddenElements() {
+    window.setTimeout(function () {
+      const selector = "*:not(script):not(head):not(meta):not(link):not(style)";
+      Array.from(document.querySelectorAll(selector))
+        .filter((element) => {
+          const computed = getComputedStyle(element);
+          const displayNone = computed["display"] === "none";
+          const visibilityHidden = computed["visibility"] === "hidden";
+          return displayNone || visibilityHidden;
+        })
+        .forEach((element) => element && element.remove());
+    }, 1000);
   }
 
   function removeSelectors(selectors) {
