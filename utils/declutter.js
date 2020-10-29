@@ -77,19 +77,16 @@ module.exports = async (url) => {
   });
 
   let userAgent = undefined;
-  const extraHTTPHeaders = [];
+  let extraHTTPHeaders = undefined;
   if (useGoogleBot) {
     userAgent =
       "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
-    extraHTTPHeaders.push({
-      name: "X-Forwarded-For",
-      value: "66.249.66.1",
-    });
+    extraHTTPHeaders = { "X-Forwarded-For": "66.249.66.1" };
   }
   const tab = await browser.newPage({
     viewport: { width: 2000, height: 10000 },
-    userAgent: userAgent,
-    extraHTTPHeaders: extraHTTPHeaders,
+    userAgent,
+    extraHTTPHeaders,
   });
   await tab.route(/.*/, (route) => {
     const routeUrl = route.request().url();
@@ -107,12 +104,11 @@ module.exports = async (url) => {
   await tab.addInitScript({ path: "utils/cosmeticFilter.js" });
 
   try {
-    await tab.waitForTimeout(1000);
     await tab.goto(url, {
       timeout: 60000,
       waitUntil: "domcontentloaded",
     });
-    await tab.waitForTimeout(5000);
+    await tab.waitForTimeout(2000);
     await fixRelativeLinks(tab, url);
 
     let [content, title] = ["", ""];
