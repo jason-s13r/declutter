@@ -100,9 +100,11 @@ module.exports = async (url) => {
     }
     return route.continue();
   });
+
   await tab.addInitScript({
     path: "bypass-paywalls-chrome/src/js/contentScript.js",
   });
+  await tab.addInitScript({ path: "utils/cosmeticFilter.js" });
 
   try {
     await tab.waitForTimeout(1000);
