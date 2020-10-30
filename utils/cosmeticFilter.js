@@ -4,7 +4,7 @@
   if (matchDomain("stuff.co.nz")) {
     removeSelectors([
       ".support-brief-container",
-      ".donation-in-story-container-top",
+      '[class*="donation-in-"]',
       ".sics-component__sharebar",
       ".breaking-news-pointer",
       ".bigbyline-container",

@@ -4,7 +4,6 @@ const path = require("path");
 const NodeCache = require("node-cache");
 
 const declutter = require("./utils/declutter");
-const { url } = require("inspector");
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
@@ -38,12 +37,13 @@ app.get("/keys.json", async (req, res) => {
 app.post("/", async (req, res) => {
   const url = req.body.url;
   const redirect = !!req.body.redirect;
+  const nocache = !!req.body.nocache;
   try {
     if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
       return res.status(400);
     }
     let telegraph = cache.get(url);
-    if (!telegraph) {
+    if (!telegraph || nocache) {
       telegraph = await declutter(url);
       cache.set(url, {
         author: telegraph.author,
