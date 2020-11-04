@@ -50,21 +50,17 @@ const buildReadableContent = async (tab, url) => {
   }
 
   const dom = new JSDOM(`<html><body>${article.content}</body></html>`);
-  const div = dom.window.document.querySelector("div");
+  const div = dom.window.document.querySelector("body");
   const source = dom.window.document.createElement("p");
   source.innerHTML = `<a href="${url}"">${url}</a>`;
   div.prepend(source);
-  content = domToNode(div).children.filter((m) => {
-    return !m.trim || m.trim().length > 0;
-  });
   return {
-    content,
-    title: article.title,
-    byline: article.byline,
+    ...article,
+    content: div.innerHTML,
   };
 };
 
-module.exports = async (url) => {
+module.exports.declutter = async (url) => {
   const browser = await firefox.launch({
     args: [],
     executablePath: process.env.DECLUTTER_BROWSER_PATH || undefined,
@@ -111,7 +107,6 @@ module.exports = async (url) => {
     await tab.waitForTimeout(2000);
     await fixRelativeLinks(tab, url);
 
-    let [content, title] = ["", ""];
     let { author, publisher, authorType } = await tab.evaluate((url) => {
       const meta = {
         author: "",
@@ -148,14 +143,12 @@ module.exports = async (url) => {
               meta.publisher = ld.publisher.name;
             }
           }
-        } catch (e) {}
+        } catch (e) { }
       });
       return meta;
     }, url);
 
     const readable = await buildReadableContent(tab, url);
-    title = readable.title;
-    content = readable.content;
     if (authorType !== "ld") {
       publisher = author;
       author = readable.byline;
@@ -165,17 +158,12 @@ module.exports = async (url) => {
       [author, publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ")
     );
 
-    const account = await telegraph.createAccount({
-      author_name: authorName,
-      author_url: url,
-      short_name: (author || publisher || authorName).substring(0, 31),
-    });
+    readable.byline = authorName;
+    readable.author = author;
+    readable.publisher = publisher;
+    readable.url = url;
 
-    const page = await telegraph.createPage(title, content, account);
-    if (page) {
-      return page;
-    }
-    throw new Error("no content");
+    return readable;
   } catch (e) {
     console.error(e);
     throw e;
@@ -183,4 +171,25 @@ module.exports = async (url) => {
     await tab.close();
     await browser.close();
   }
+};
+
+module.exports.telegraph = async (url, readable) => {
+  const account = await telegraph.createAccount({
+    author_name: readable.author,
+    author_url: url,
+    short_name: (
+      readable.author ||
+      readable.publisher ||
+      readable.byline
+    ).substring(0, 31),
+  });
+
+  const dom = new JSDOM(`<html><body>${readable.content}</body></html>`);
+  const div = dom.window.document.querySelector("body");
+  const dtn = domToNode(div);
+  const content = dtn.children.filter((m) => {
+    return !m.trim || m.trim().length > 0;
+  });
+  const page = await telegraph.createPage(readable.title, content, account);
+  return page;
 };

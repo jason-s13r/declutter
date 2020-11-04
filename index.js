@@ -3,11 +3,12 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const NodeCache = require("node-cache");
 
-const declutter = require("./utils/declutter");
+const { declutter, telegraph } = require("./utils/declutter");
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
 const cache = new NodeCache();
+const declutter_cache = new NodeCache();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -42,27 +43,77 @@ app.post("/", async (req, res) => {
     if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
       return res.status(400);
     }
-    let telegraph = cache.get(url);
-    if (!telegraph || nocache) {
-      telegraph = await declutter(url);
-      cache.set(url, {
-        author: telegraph.author,
-        author_url: telegraph.author_url,
-        description: telegraph.description,
-        title: telegraph.title,
-        url: telegraph.url,
-      });
+    let page = cache.get(url);
+    let readable = declutter_cache.get(url);
+    if (nocache) {
+      page = undefined;
+      readable = undefined;
+      console.log('[simple] no cache');
+    }
+    console.log('[simple] have cached page', !!page);
+    if (!page) {
+      console.log('[simple] have cached readable', !!readable);
+      if (!readable) {
+        console.log('[simple] doing a declutter');
+        readable = await declutter(url);
+        declutter_cache.set(url, readable);
+        console.log('[simple] have decluttered readable', !!readable);
+      }
+      console.log('[simple] doing a page');
+      page = await telegraph(url, readable);
+      console.log('[simple] have created page', !!page);
+      if (page) {
+        cache.set(url, {
+          author: page.author,
+          author_url: page.author_url,
+          description: page.description,
+          title: page.title,
+          url: page.url,
+        });
+      }
+    }
+    if (!page) {
+      return res.status(500);
     }
     if (redirect) {
-      return res.redirect(telegraph.url);
+      console.log('[simple] sent page redirect');
+      return res.redirect(page.url);
     }
-    return res.send(telegraph.url);
+    console.log('[simple] sent page url');
+    return res.send(page.url);
   } catch (e) {
     if (/timeout/i.test(e.message)) {
       return res.status(504);
     }
     return res.status(500);
   }
+});
+
+app.post("/details", async (req, res) => {
+  const url = req.body.url;
+  const nocache = !!req.body.nocache;
+  if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
+    return res.status(400);
+  }
+  let page = cache.get(url);
+  let readable = declutter_cache.get(url);
+  if (nocache) {
+    page = undefined;
+    readable = undefined;
+    console.log('[details] no cache');
+  }
+  console.log('[details] have cached readable', !!readable);
+  if (!readable) {
+    console.log('[details] doing a declutter');
+    readable = await declutter(url);
+    declutter_cache.set(url, readable);
+    console.log('[details] have decluttered readable', !!readable);
+  }
+  if (!readable) {
+    return res.status(500);
+  }
+  console.log('[details] sent readable');
+  return res.send(readable);
 });
 
 app.listen(port, () => console.log(`Declutter app listening on port ${port}!`));
