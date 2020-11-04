@@ -45,19 +45,11 @@ const buildReadableContent = async (tab, url) => {
   const doc = new JSDOM(body, { url });
   const reader = new Readability(doc.window.document);
   const article = reader.parse();
-  if (!article || !article.content) {
-    return { content: [], title: "" };
+  if (!article) {
+    return { content: '', title: '', byline: '' };
   }
 
-  const dom = new JSDOM(`<html><body>${article.content}</body></html>`);
-  const div = dom.window.document.querySelector("body");
-  const source = dom.window.document.createElement("p");
-  source.innerHTML = `<a href="${url}"">${url}</a>`;
-  div.prepend(source);
-  return {
-    ...article,
-    content: div.innerHTML,
-  };
+  return article;
 };
 
 module.exports.declutter = async (url) => {
@@ -186,8 +178,10 @@ module.exports.telegraph = async (url, readable) => {
 
   const dom = new JSDOM(`<html><body>${readable.content}</body></html>`);
   const div = dom.window.document.querySelector("body");
-  const dtn = domToNode(div);
-  const content = dtn.children.filter((m) => {
+  const source = dom.window.document.createElement("p");
+  source.innerHTML = `<a href="${url}"">${url}</a>`;
+  div.prepend(source);
+  const content = domToNode(div).children.filter((m) => {
     return !m.trim || m.trim().length > 0;
   });
   const page = await telegraph.createPage(readable.title, content, account);
