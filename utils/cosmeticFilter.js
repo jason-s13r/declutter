@@ -24,6 +24,8 @@
     ]);
   } else if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
+  } else if (matchDomain(["newsroom.co.nz"])) {
+    removeSelectors([".article_content__section", '.bio']);
   }
 
   function matchDomain(domains) {
