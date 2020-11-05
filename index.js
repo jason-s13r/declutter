@@ -4,11 +4,16 @@ const path = require("path");
 const NodeCache = require("node-cache");
 
 const { declutter, telegraph } = require("./utils/declutter");
+const { disqus } = require("./utils/disqus");
+
+const MINUTE = 60;
+const HOUR = 60 * MINUTE;
 
 const port = process.env.NODE_PORT || 3000;
 const app = express();
-const cache = new NodeCache();
-const declutter_cache = new NodeCache();
+const cache = new NodeCache({ stdTTL: 24 * HOUR });
+const declutter_cache = new NodeCache({ stdTTL: 30 * MINUTE });
+const comment_cache = new NodeCache({ stdTTL: 30 * MINUTE });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -114,6 +119,33 @@ app.post("/details", async (req, res) => {
   }
   console.log('[details] sent readable');
   return res.send(readable);
+});
+
+
+
+app.post("/comments", async (req, res) => {
+  const url = req.body.url;
+  const nocache = !!req.body.nocache;
+  if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
+    return res.status(400);
+  }
+  let comments = comment_cache.get(url);
+  if (nocache) {
+    comments = undefined;
+    console.log('[comments] no cache');
+  }
+  console.log('[comments] have cached comments', !!comments);
+  if (!comments) {
+    console.log('[comments] doing a disqus');
+    comments = await disqus(url);
+    comment_cache.set(url, comments);
+    console.log('[comments] have disqus comments', !!comments);
+  }
+  if (!comments) {
+    return res.status(500);
+  }
+  console.log('[comments] sent comments');
+  return res.send(comments);
 });
 
 app.listen(port, () => console.log(`Declutter app listening on port ${port}!`));
