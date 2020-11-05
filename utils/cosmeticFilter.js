@@ -23,6 +23,7 @@
       ".website-of-year",
       '.meta-data',
       '.article__kicker',
+      '.author__image',
     ]);
   } else if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
