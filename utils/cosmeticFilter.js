@@ -21,6 +21,8 @@
       ".share-bar",
       ".c-suggest-links.read-more-links",
       ".website-of-year",
+      '.meta-data',
+      '.article__kicker',
     ]);
   } else if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
