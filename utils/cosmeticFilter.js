@@ -13,7 +13,8 @@
         "READ MORE:",
       ],
     ]);
-  } else if (matchDomain("nzherald.co.nz")) {
+  }
+  if (matchDomain("nzherald.co.nz")) {
     removeSelectors([
       "[href$='#commenting-widget']",
       ".related-articles",
@@ -21,14 +22,22 @@
       ".share-bar",
       ".c-suggest-links.read-more-links",
       ".website-of-year",
-      '.meta-data',
-      '.article__kicker',
-      '.author__image',
+      ".meta-data",
+      ".article__kicker",
+      ".author__image",
     ]);
-  } else if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
+  }
+  if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
-  } else if (matchDomain(["newsroom.co.nz"])) {
-    removeSelectors([".article_content__section", '.bio']);
+  }
+  if (matchDomain(["newsroom.co.nz"])) {
+    removeSelectors([".article_content__section", ".bio"]);
+  }
+  if (matchDomain(["newshub.co.nz"])) {
+    removeSelectors([".c-ArticleHeading-authorPicture", ".relatedarticles"]);
+  }
+  if (matchDomain(["tvnz.co.nz"])) {
+    removeSelectors([".signup-container container"]);
   }
 
   function matchDomain(domains) {
@@ -75,7 +84,8 @@
       const elements = selectors.flatMap((s) => {
         if (typeof s === "string") {
           return Array.from(document.querySelectorAll(s));
-        } else if (s && s.constructor.name === "Array") {
+        }
+        if (s && s.constructor.name === "Array") {
           return pageContains(...s);
         }
         return undefined;
