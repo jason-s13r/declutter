@@ -1,6 +1,6 @@
 (function () {
   function fetchLinks() {
-    return fetch("/keys.json")
+    return fetch("/recent.json")
       .then((response) => {
         if (response.ok) {
           return response.json();

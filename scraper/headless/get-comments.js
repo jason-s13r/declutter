@@ -1,11 +1,11 @@
 const { JSDOM } = require("jsdom");
 const { firefox } = require("playwright");
-const { getUserAgent } = require('./user-agent');
-const { disqusThread } = require('./disqus-thread');
+const { getUserAgent } = require('../../utils/user-agent');
+const { disqusThread } = require('../../utils/disqus-thread');
 
 const DISQUS_EMBED = 'https://disqus.com/embed/comments/';
 
-module.exports.disqus = async (url) => {
+module.exports.getComments = async (url) => {
 	const { userAgent, headers } = getUserAgent(url);
 
 	const browser = await firefox.launch({ args: [], headless: true });

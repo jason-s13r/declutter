@@ -4,47 +4,48 @@ module.exports.extractMetadata = extractMetadata;
 module.exports.cleanHtmlText = cleanHtmlText;
 module.exports.addMetadata = addMetadata;
 
-async function extractMetadata(tab, url) {
-	return await tab.evaluate((url) => {
-		const meta = {
-			author: "",
-			publisher: new URL(url).host,
-			authorType: "",
-		};
+function extractMetadata(html, url) {
+	const dom = new JSDOM(html, { url });
+	const document = dom.window.document;
 
-		const ogProps = document.querySelector('meta[property="og:site_name"]');
-		const itemProps = document.querySelectorAll('[itemprop="author"]');
-		const ldJsonTags = document.querySelectorAll(
-			'script[type="application/ld+json"]'
-		);
+	const meta = {
+		author: "",
+		publisher: new URL(url).host,
+		authorType: "",
+	};
 
-		if (ogProps) {
-			meta.author = ogProps && ogProps.content ? ogProps.content : "";
-			meta.authorType = "og";
-		}
+	const ogProps = document.querySelector('meta[property="og:site_name"]');
+	const itemProps = document.querySelectorAll('[itemprop="author"]');
+	const ldJsonTags = document.querySelectorAll(
+		'script[type="application/ld+json"]'
+	);
 
-		Array.from(itemProps).forEach((element) => {
-			meta.publisher = meta.author;
-			meta.author = element.innerText;
-			meta.authorType = "ld";
-		});
+	if (ogProps) {
+		meta.author = ogProps && ogProps.content ? ogProps.content : "";
+		meta.authorType = "og";
+	}
 
-		Array.from(ldJsonTags).forEach((ldTag) => {
-			try {
-				const ld = JSON.parse(ldTag.innerHTML);
-				if (ld["@type"] === "Article") {
-					if (ld.author && ld.author["@type"] === "Person") {
-						meta.author = ld.author.name;
-						meta.authorType = "ld";
-					}
-					if (ld.publisher && ld.publisher["@type"] === "Organization") {
-						meta.publisher = ld.publisher.name;
-					}
+	Array.from(itemProps).forEach((element) => {
+		meta.publisher = meta.author;
+		meta.author = element.innerText;
+		meta.authorType = "ld";
+	});
+
+	Array.from(ldJsonTags).forEach((ldTag) => {
+		try {
+			const ld = JSON.parse(ldTag.innerHTML);
+			if (ld["@type"] === "Article") {
+				if (ld.author && ld.author["@type"] === "Person") {
+					meta.author = ld.author.name;
+					meta.authorType = "ld";
 				}
-			} catch (e) { }
-		});
-		return meta;
-	}, url);
+				if (ld.publisher && ld.publisher["@type"] === "Organization") {
+					meta.publisher = ld.publisher.name;
+				}
+			}
+		} catch (e) { }
+	});
+	return meta;
 };
 
 function cleanHtmlText(text) {
