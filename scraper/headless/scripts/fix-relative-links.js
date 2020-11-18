@@ -1,4 +1,4 @@
-(function () {
+window.addEventListener('DOMContentLoaded', function (event) {
 	const { host, protocol } = window.location;
 	const url = `${protocol}//${host}`;
 	[
@@ -11,4 +11,4 @@
 				e.attributes[attribute].value = `${url}${e.attributes[attribute].value}`;
 			});
 	});
-})();
+});

@@ -1,4 +1,4 @@
-(function () {
+window.addEventListener('DOMContentLoaded', function (event) {
   removeHiddenElements();
 
   if (matchDomain("stuff.co.nz")) {
@@ -48,7 +48,8 @@
     removeSelectors([
       ".the-spinoff-club-interruptive",
       ".bulletin-signup",
-      ".sponsor_post_footer"
+      ".addthis_sharing_toolbox",
+      "#sponsor_post_footer"
     ]);
   }
 
@@ -105,4 +106,4 @@
       removeDOMElement(...elements);
     }, 500);
   }
-})();
+});
