@@ -24,7 +24,7 @@ module.exports.getDetails = async (url) => {
 			if (domain && routeUrl.match(blockedRegexes[domain])) {
 				return route.abort();
 			}
-			return route.continue();
+			return route.continue().catch(() => void 0);
 		});
 		await tab.addInitScript({ path: "vendor/bypass-paywalls-chrome/src/js/contentScript.js" });
 		await tab.addInitScript({ path: "scraper/headless/scripts/cosmetic-filter.js" });
