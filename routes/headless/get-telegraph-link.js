@@ -14,6 +14,7 @@ async function getTelegraphLink(req, res) {
 		if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
 			return res.status(400);
 		}
+		console.log(`[headless/telegraph] for url ${url}`);
 		let page = cache.telegraph.get(url);
 		let readable = cache.declutter.get(url);
 		if (nocache) {

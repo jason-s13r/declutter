@@ -11,10 +11,9 @@ async function getDetails(req, res) {
 	if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
 		return res.status(400);
 	}
-	let page = cache.telegraph.get(url);
+	console.log(`[headless/details] for url ${url}`);
 	let readable = cache.declutter.get(url);
 	if (nocache) {
-		page = undefined;
 		readable = undefined;
 		console.log('[headless/details] no cache');
 	}

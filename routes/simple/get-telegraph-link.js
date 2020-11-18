@@ -12,6 +12,7 @@ async function getTelegraphLink(req, res) {
 		if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
 			return res.status(400);
 		}
+		console.log(`[simple/telegraph] for url ${url}`);
 		console.log('[simple/telegraph] doing a declutter');
 		const readable = await scraper.getDetails(url);
 		console.log('[simple/telegraph] have decluttered readable', !!readable);

@@ -11,6 +11,7 @@ async function getComments(req, res) {
 	if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
 		return res.status(400);
 	}
+	console.log(`[headless/comments] for url ${url}`);
 	let comments = cache.comment.get(url);
 	if (nocache) {
 		comments = undefined;

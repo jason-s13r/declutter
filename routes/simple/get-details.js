@@ -9,6 +9,7 @@ async function getDetails(req, res) {
 	if (!/https?:\/\/(www\.)?.*\/.*/i.test(url)) {
 		return res.status(400);
 	}
+	console.log(`[simple/details] for url ${url}`);
 	console.log('[simple/details] doing a declutter');
 	const readable = await scraper.getDetails(url);
 	console.log('[simple/details] have decluttered readable', !!readable);

@@ -12,10 +12,8 @@ async function getContent(req, res) {
 		return res.status(400);
 	}
 	console.log(`[headless/html] for url ${url}`);
-	let page = cache.telegraph.get(url);
 	let readable = cache.declutter.get(url);
 	if (nocache) {
-		page = undefined;
 		readable = undefined;
 		console.log('[headless/html] no cache');
 	}
