@@ -43,7 +43,14 @@ window.addEventListener('DOMContentLoaded', function (event) {
     ]);
   }
   if (matchDomain(["tvnz.co.nz"])) {
-    removeSelectors([".signup-container container"]);
+    removeSelectors([
+      '.story-footer',
+      '.story-social-share-col',
+      '.story-related-tags',
+      ".signup-container",
+      '.signup-image',
+      '.signup-content',
+    ]);
   }
   if (matchDomain(["thespinoff.co.nz"])) {
     removeSelectors([
