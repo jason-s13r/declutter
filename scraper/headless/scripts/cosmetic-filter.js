@@ -25,6 +25,7 @@ window.addEventListener('DOMContentLoaded', function (event) {
       ".meta-data",
       ".article__kicker",
       ".author__image",
+      '[alt="Subscribe to Premium"]',
     ]);
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
@@ -38,7 +39,7 @@ window.addEventListener('DOMContentLoaded', function (event) {
       ".c-ArticleHeading-authorPicture",
       ".relatedarticles",
       ".ArticleAttribution",
-      '.GlobalFooter'
+      '.GlobalFooter',
     ]);
   }
   if (matchDomain(["tvnz.co.nz"])) {
@@ -49,7 +50,7 @@ window.addEventListener('DOMContentLoaded', function (event) {
       ".the-spinoff-club-interruptive",
       ".bulletin-signup",
       ".addthis_sharing_toolbox",
-      "#sponsor_post_footer"
+      "#sponsor_post_footer",
     ]);
   }
 
