@@ -1,8 +1,22 @@
 const { JSDOM } = require("jsdom");
+const { Readability } = require("@mozilla/readability");
+// const { parse } = require("@postlight/mercury-parser");
 
+module.exports.extractReadable = extractReadable;
 module.exports.extractMetadata = extractMetadata;
 module.exports.cleanHtmlText = cleanHtmlText;
 module.exports.addMetadata = addMetadata;
+
+async function extractReadable(html, url) {
+	const doc = new JSDOM(html, { url });
+	const reader = new Readability(doc.window.document);
+	let readable = reader.parse();
+	let { author, publisher, authorType } = extractMetadata(html, url)
+
+	readable.url = url;
+	readable = addMetadata(readable, authorType, author, publisher, url);
+	return readable;
+}
 
 function extractMetadata(html, url) {
 	const dom = new JSDOM(html, { url });
@@ -54,10 +68,10 @@ function cleanHtmlText(text) {
 	return s.textContent;
 };
 
-function addMetadata(readable, authorType, author, publisher, url) {
+function addMetadata(readable, authorType, author, publisher) {
 	if (authorType !== "ld") {
 		publisher = author;
-		author = readable.byline;
+		author = readable.author || readable.byline;
 	}
 
 	const authorName = cleanHtmlText(
@@ -67,6 +81,5 @@ function addMetadata(readable, authorType, author, publisher, url) {
 	readable.byline = authorName;
 	readable.author = author;
 	readable.publisher = publisher;
-	readable.url = url;
 	return readable;
 }

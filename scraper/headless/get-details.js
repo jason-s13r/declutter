@@ -1,10 +1,8 @@
 const { firefox } = require("playwright");
-const { JSDOM } = require("jsdom");
-const { Readability } = require("@mozilla/readability");
 
 const { getUserAgent } = require('../../utils/user-agent');
 const { blockedRegexes, matchUrlDomain } = require("../../utils/sites");
-const { addMetadata, extractMetadata } = require('../../utils/extract-metadata');
+const { extractReadable } = require('../../utils/extract-metadata');
 
 module.exports.getDetails = async (url) => {
 	const { userAgent, headers } = getUserAgent(url);
@@ -34,13 +32,7 @@ module.exports.getDetails = async (url) => {
 		await tab.waitForTimeout(2000);
 
 		const html = await tab.content();
-		const doc = new JSDOM(html, { url });
-		const reader = new Readability(doc.window.document);
-		let readable = reader.parse();
-		let { author, publisher, authorType } = extractMetadata(html, url)
-
-		readable = addMetadata(readable, authorType, author, publisher, url);
-
+		const readable = await extractReadable(html, url);
 		return readable;
 	} catch (e) {
 		throw e;
