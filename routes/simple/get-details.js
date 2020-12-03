@@ -11,11 +11,16 @@ async function getDetails(req, res) {
 	}
 	console.log(`[simple/details] for url ${url}`);
 	console.log('[simple/details] doing a declutter');
-	const readable = await scraper.getDetails(url);
-	console.log('[simple/details] have decluttered readable', !!readable);
-	if (!readable) {
-		return res.status(500);
+	try {
+		const readable = await scraper.getDetails(url);
+		console.log('[simple/details] have decluttered readable', !!readable);
+		if (!readable) {
+			return res.status(500);
+		}
+		console.log('[simple/details] sent readable');
+		return res.send(readable);
+	} catch (e) {
+		console.error('[simple/details] have decluttered readable', e);
+		return res.sendStatus(500);
 	}
-	console.log('[simple/details] sent readable');
-	return res.send(readable);
 }

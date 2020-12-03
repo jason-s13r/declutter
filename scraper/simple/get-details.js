@@ -13,7 +13,7 @@ module.exports.getDetails = async (url) => {
 			}
 		});
 		if (!response.ok) {
-			return res.sendStatus(response.statusCode);
+			throw response.statusText;
 		}
 		const html = await response.text();
 		const readable = await extractReadable(html, url);
