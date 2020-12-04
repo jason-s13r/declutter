@@ -28,7 +28,10 @@ async function extractReadable(html, url) {
 
 	readable.author = readable.meta.author;
 	readable.publisher = readable.meta.publisher;
-	readable.byline = [readable.meta.author, readable.meta.publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ");
+
+	const byline = doc.window.document.createElement('span');
+	byline.innerHTML = [readable.meta.author, readable.meta.publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ");
+	readable.byline = byline.textContent;
 
 	return readable;
 }
