@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function (event) {
+window.addEventListener('DOMContentLoaded', function () {
 	const { host, protocol } = window.location;
 	const url = `${protocol}//${host}`;
 	[

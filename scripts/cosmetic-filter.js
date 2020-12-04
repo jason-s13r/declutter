@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function (event) {
+window.addEventListener('DOMContentLoaded', function () {
   removeHiddenElements();
 
   if (matchDomain("stuff.co.nz")) {
