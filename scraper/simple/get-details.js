@@ -3,7 +3,6 @@ const { JSDOM } = require('jsdom');
 const { Script, createContext } = require("vm");
 const { readFile } = require('fs');
 
-
 const { getUserAgent } = require('../../utils/user-agent');
 const { extractReadable } = require('../../utils/extract-metadata');
 
@@ -38,13 +37,15 @@ module.exports.getDetails = async (url) => {
 			throw response.statusText;
 		}
 
-		const { window } = new JSDOM(await response.text(), { url });
+		const original = await response.text();
+		const { window } = new JSDOM(original, { url });
 		window.window = window;
 		window.setTimeout = cb => cb();
 		window.setInterval = cb => cb();
 		const context = createContext(window);
 
 		await runScript('vendor/bypass-paywalls-chrome/src/js/contentScript.js', context);
+		await runScript('scripts/lazyload.js', context);
 		await runScript('scripts/cosmetic-filter.js', context);
 		await runScript('scripts/fix-relative-links.js', context);
 
@@ -53,6 +54,9 @@ module.exports.getDetails = async (url) => {
 		const html = context.document.querySelector('html').innerHTML;
 
 		const readable = await extractReadable(html, url);
+
+		response.original = original;
+
 		return readable;
 	} catch (e) {
 		throw e;

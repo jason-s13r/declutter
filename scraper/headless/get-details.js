@@ -28,8 +28,8 @@ module.exports.getDetails = async (url) => {
 		await tab.addInitScript({ path: "vendor/bypass-paywalls-chrome/src/js/contentScript.js" });
 		await tab.addInitScript({ path: "scripts/cosmetic-filter.js" });
 		await tab.addInitScript({ path: "scripts/fix-relative-links.js" });
-		await tab.goto(url, { timeout: 90000, waitUntil: "domcontentloaded" });
-		await tab.waitForTimeout(2000);
+		await tab.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
+		await tab.waitForTimeout(5000);
 
 		const html = await tab.content();
 		const readable = await extractReadable(html, url);

@@ -20,10 +20,7 @@ app.use('/simple', simple.router());
 
 
 app.get('/_form', (_, res) => {
-	const prefixes = ['', '/headless', '/simple'];
-	const routes = ['/', '/telegraph', '/content', '/details', '/comments'];
-	const html = prefixes.flatMap(p => routes.map(r => p + r))
-		.map(route => `
+	const routeHtml = route => `
 	<form method="POST" action="${route}" accept-charset="UTF-8">
 		<fieldset>
 			<legend>route: POST ${route}</legend>
@@ -31,8 +28,17 @@ app.get('/_form', (_, res) => {
 			<p><input type="checkbox" name="redirect" /> redirect?</p>
 			<p><button type="submit">SUBMIT</button></p>
 		</fieldset>
-	</form>`).join('<hr />');
+	</form>`;
+	const prefixHtml = (prefix, routes) => `
+	<fieldset style="display: inline-block; width: 500px; max-width: 100vw;">
+		<legend>${prefix}</legend>
+		<div>${routes}</div >
+	</fieldset> `;
+	const prefixes = ['', '/headless', '/simple'];
+	const routes = ['/', '/telegraph', '/content', '/details', '/comments'];
+
+	const html = prefixes.map(prefix => prefixHtml(prefix, routes.map(r => prefix + r).map(routeHtml).join('<hr />'))).join('');
 	res.send(html);
 });
 
-app.listen(port, () => console.log(`Declutter app listening on port ${port}!`));
+app.listen(port, () => console.log(`Declutter app listening on port ${port} !`));

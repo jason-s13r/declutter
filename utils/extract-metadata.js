@@ -11,6 +11,8 @@ const metascraper = require('metascraper')([
 	require('metascraper-url')(),
 	require('metascraper-readability')()
 ]);
+const Turndown = require('turndown');
+const { Converter } = require('showdown');
 // const { parse } = require("@postlight/mercury-parser");
 
 module.exports.extractReadable = extractReadable;
@@ -32,6 +34,11 @@ async function extractReadable(html, url) {
 	const byline = doc.window.document.createElement('span');
 	byline.innerHTML = [readable.meta.author, readable.meta.publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ");
 	readable.byline = byline.textContent;
+
+	readable.html = readable.content;
+	readable.markdown = new Turndown().turndown(readable.content);
+	readable.content = new Converter().makeHtml(readable.markdown);
+
 
 	return readable;
 }
