@@ -57,7 +57,6 @@ async function extractMetadata(html, url) {
 	const metadata = await metascraper({ html, url });
 	metadata.og = extractOpengraph(window.document);
 	try {
-		console.log('doing a youtube-dl');
 		metadata.videos = await extractVideos(url);
 	} catch (e) {
 		console.error(e);
@@ -85,10 +84,8 @@ function replaceVideos(window, videos) {
 	}
 	videos.forEach(info => {
 		const id = info.id.replace(/(^ref\:)/, '');
-		console.log(info.info, id);
 		const $original = window.document.querySelector(`[data-video-id="${info.id}"],[data-video-id="${id}"],[id*="${info.id}"],[id*="${id}"]`)
 		if (!$original) {
-			console.log('no video', info.info, id);
 			return;
 		}
 		const $parent = $original.parentNode;
