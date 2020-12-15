@@ -36,6 +36,7 @@ window.addEventListener('DOMContentLoaded', function () {
 		const url = new URL(decodeURIComponent(probably));
 		e.setAttribute('lazy', src);
 		if (url) {
+			url.protocol = 'https';
 			e.setAttribute('src', url.toString());
 		}
 	})
