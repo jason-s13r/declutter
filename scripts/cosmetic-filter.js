@@ -26,6 +26,10 @@ window.addEventListener('DOMContentLoaded', function () {
       ".article__kicker",
       ".author__image",
       '[alt="Subscribe to Premium"]',
+      [
+        "p > strong",
+        "READ MORE:",
+      ],
     ]);
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {

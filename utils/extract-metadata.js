@@ -27,8 +27,6 @@ async function extractReadable(html, url) {
 		replaceVideos(window, metadata.videos);
 	}
 
-	Array.from(window.document.querySelectorAll('img'), $i => $i.setAttribute('loading', 'lazy'));
-
 	const reader = new Readability(window.document);
 	let readable = reader.parse();
 
@@ -43,14 +41,31 @@ async function extractReadable(html, url) {
 	byline.innerHTML = [metadata.author, metadata.publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ");
 	readable.byline = byline.textContent;
 
-	const DOMPurify = createDOMPurify(new JSDOM('').window);
 
 	readable.html = readable.content;
-	readable.content = DOMPurify.sanitize(readable.html);
+	readable.content = cleanMarkup(readable.html, url);
 	readable.markdown = new Turndown().turndown(readable.content);
 	readable.meta.links = await extractLinks(readable.content, url);
 
 	return readable;
+}
+
+function cleanMarkup(html, url) {
+	const { window } = new JSDOM(`<html>${html}</html>`, { url });
+
+	Array.from(window.document.querySelectorAll('*'), $e => {
+		$e.getAttributeNames()
+			.filter(a => /(^data-|^class$|^style$|^id$)/.test(a))
+			.forEach(a => $e.removeAttribute(a));
+	});
+	Array.from(window.document.querySelectorAll('img,iframe'), $e => $e.setAttribute('loading', 'lazy'));
+	Array.from(window.document.querySelectorAll(':not(input,meta,br,link,img,html)'))
+		.reverse()
+		.forEach($e => !$e.children.length && !$e.textContent && $e.remove());
+
+	html = window.document.querySelector('html').innerHTML;
+	const DOMPurify = createDOMPurify(window);
+	return DOMPurify.sanitize(html);
 }
 
 async function extractMetadata(html, url) {
