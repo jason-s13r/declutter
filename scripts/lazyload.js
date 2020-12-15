@@ -26,3 +26,17 @@ window.addEventListener('DOMContentLoaded', function () {
 		}
 	})
 });
+
+window.addEventListener('DOMContentLoaded', function () {
+	const elements = document.querySelectorAll('img[src^="https://dynaimage.cdn.cnn.com"');
+
+	Array.from(elements, e => {
+		const src = e.getAttribute('src');
+		const probably = src.split('/').reverse()[0];
+		const url = new URL(decodeURIComponent(probably));
+		e.setAttribute('lazy', src);
+		if (url) {
+			e.setAttribute('src', url.toString());
+		}
+	})
+});
