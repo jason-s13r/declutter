@@ -1,4 +1,11 @@
 window.addEventListener('DOMContentLoaded', function () {
+	const elements = document.querySelectorAll('img[data-src]');
+	Array.from(elements, img => {
+		img.setAttribute('src', meta.getAttribute('data-src'));
+	})
+});
+
+window.addEventListener('DOMContentLoaded', function () {
 	const elements = document.querySelectorAll('[data-srcset]');
 	Array.from(elements, e => {
 		const srcset = e.getAttribute('data-srcset');
@@ -21,7 +28,7 @@ window.addEventListener('DOMContentLoaded', function () {
 		if (itemprop === 'image' && itemtype === 'http://schema.org/ImageObject') {
 			const meta = img.parentNode.querySelector('meta[itemprop="url"]')
 			if (meta) {
-				img.src = meta.getAttribute('content');
+				img.setAttribute('src', meta.getAttribute('content'));
 			}
 		}
 	})

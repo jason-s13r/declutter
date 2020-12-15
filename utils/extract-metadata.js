@@ -27,6 +27,8 @@ async function extractReadable(html, url) {
 		replaceVideos(window, metadata.videos);
 	}
 
+	Array.from(window.document.querySelectorAll('img'), $i => $i.setAttribute('loading', 'lazy'));
+
 	const reader = new Readability(window.document);
 	let readable = reader.parse();
 
@@ -34,12 +36,11 @@ async function extractReadable(html, url) {
 	readable.dir = undefined;
 	readable.url = url;
 	readable.meta = metadata;
-
-	readable.author = readable.meta.author;
-	readable.publisher = readable.meta.publisher;
+	readable.author = metadata.author;
+	readable.publisher = metadata.publisher;
 
 	const byline = window.document.createElement('span');
-	byline.innerHTML = [readable.meta.author, readable.meta.publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ");
+	byline.innerHTML = [metadata.author, metadata.publisher].filter((s) => !!s && !!s.trim()).join(" &bull; ");
 	readable.byline = byline.textContent;
 
 	const DOMPurify = createDOMPurify(new JSDOM('').window);
@@ -47,33 +48,35 @@ async function extractReadable(html, url) {
 	readable.html = readable.content;
 	readable.content = DOMPurify.sanitize(readable.html);
 	readable.markdown = new Turndown().turndown(readable.content);
+	readable.meta.links = await extractLinks(readable.content, url);
 
 	return readable;
 }
 
 async function extractMetadata(html, url) {
 	const { window } = new JSDOM(html, { url });
-
 	const metadata = await metascraper({ html, url });
 	metadata.og = extractOpengraph(window.document);
 	try {
 		metadata.videos = await extractVideos(url);
-	} catch (e) {
-		console.error(e);
-	}
-
+	} catch (e) { }
 	return metadata;
+};
+
+async function extractLinks(html, url) {
+	const { window } = new JSDOM(html, { url });
+	return Array
+		.from(window.document.querySelectorAll('a'))
+		.map($a => $a.href);
 };
 
 async function extractVideos(url) {
 	return new Promise((resolve, reject) => {
-		const args = ['-j'];
-		const opts = {};
-		youtubedl.getInfo(url, args, opts, (e, o) => {
+		youtubedl.getInfo(url, [], {}, (e, o) => {
 			if (e) {
-				reject(e);
+				return reject(e);
 			}
-			resolve(o instanceof Array ? o : [o]);
+			return resolve(o instanceof Array ? o : [o]);
 		});
 	});
 }
