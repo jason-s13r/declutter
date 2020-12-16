@@ -27,6 +27,7 @@ window.addEventListener("DOMContentLoaded", function () {
       ".meta-data",
       ".article__kicker",
       ".author__image",
+      '.video-outer + figcaption',
       '[alt="Subscribe to Premium"]',
       ["p > strong", "READ MORE:"],
     ]);
