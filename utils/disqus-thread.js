@@ -7,14 +7,14 @@ module.exports.disqusThread = data => {
 			date: post.createdAt,
 			text: post.raw_message,
 			score: post.points,
-			children: [],
+			comments: [],
 			id: post.id.toString(),
 			parent: (post.parent || '').toString(),
 		}
 	}), {});
 	Object.keys(comments).filter(id => !!comments[id].parent).forEach(id => {
 		const comment = comments[id];
-		comments[comment.parent].children.push(comment);
+		comments[comment.parent].comments.push(comment);
 	});
 	const parents = Object.keys(comments).filter(id => comments[id].parent).map(id => comments[id]);
 	return parents;
