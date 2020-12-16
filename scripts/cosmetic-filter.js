@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener("DOMContentLoaded", function () {
   removeHiddenElements();
 
   if (matchDomain("stuff.co.nz")) {
@@ -8,6 +8,8 @@ window.addEventListener('DOMContentLoaded', function () {
       ".sics-component__sharebar",
       ".breaking-news-pointer",
       ".bigbyline-container",
+      ".sics-component__story-video .sics-component__caption",
+      ".sics-component__caption__top-line",
       [
         ".sics-component__html-injector.sics-component__story__paragraph",
         "READ MORE:",
@@ -26,10 +28,7 @@ window.addEventListener('DOMContentLoaded', function () {
       ".article__kicker",
       ".author__image",
       '[alt="Subscribe to Premium"]',
-      [
-        "p > strong",
-        "READ MORE:",
-      ],
+      ["p > strong", "READ MORE:"],
     ]);
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
@@ -43,17 +42,17 @@ window.addEventListener('DOMContentLoaded', function () {
       ".c-ArticleHeading-authorPicture",
       ".relatedarticles",
       ".ArticleAttribution",
-      '.GlobalFooter',
+      ".GlobalFooter",
     ]);
   }
   if (matchDomain(["tvnz.co.nz"])) {
     removeSelectors([
-      '.story-footer',
-      '.story-social-share-col',
-      '.story-related-tags',
+      ".story-footer",
+      ".story-social-share-col",
+      ".story-related-tags",
       ".signup-container",
-      '.signup-image',
-      '.signup-content',
+      ".signup-image",
+      ".signup-content",
     ]);
   }
   if (matchDomain(["thespinoff.co.nz"])) {
