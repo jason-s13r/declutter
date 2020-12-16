@@ -59,7 +59,7 @@ function cleanMarkup(html, url) {
 			.forEach(a => $e.removeAttribute(a));
 	});
 	Array.from(window.document.querySelectorAll('img,iframe'), $e => $e.setAttribute('loading', 'lazy'));
-	Array.from(window.document.querySelectorAll(':not(input,meta,br,link,img,html)'))
+	Array.from(window.document.querySelectorAll(':not(input,meta,br,link,img,video,html)'))
 		.reverse()
 		.forEach($e => !$e.children.length && !$e.textContent && $e.remove());
 
