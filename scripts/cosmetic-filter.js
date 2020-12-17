@@ -41,6 +41,7 @@ window.addEventListener("DOMContentLoaded", function () {
   if (matchDomain(["newshub.co.nz"])) {
     removeSelectors([
       ".c-ArticleHeading-authorPicture",
+      '.c-ArticlePublisher img',
       ".relatedarticles",
       ".ArticleAttribution",
       ".GlobalFooter",
