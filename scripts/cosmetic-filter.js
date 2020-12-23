@@ -65,6 +65,12 @@ window.addEventListener("DOMContentLoaded", function () {
       "#sponsor_post_footer",
     ]);
   }
+  if (matchDomain(["odt.co.nz"])) {
+    removeSelectors([
+      ".breadcrumb-wrapper",
+      '[class*="presspatron-message"]',
+    ]);
+  }
 
   function matchDomain(domains) {
     const hostname = window.location.hostname;
