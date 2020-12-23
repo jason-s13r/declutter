@@ -34,6 +34,20 @@ window.addEventListener("DOMContentLoaded", function () {
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
+    Array.from(document.querySelectorAll('div.photo-captioned'), $element => {
+      const $img = $element.querySelector('img');
+      if (!$img) {
+        return;
+      }
+      const $caption = $element.querySelector('.caption');
+      const figure = document.createElement('figure');
+      const figcaption = document.createElement('figcaption');
+      figcaption.innerHTML = $caption.innerHTML;
+      figure.appendChild($img);
+      figure.appendChild(figcaption);
+      $element.parentElement.insertBefore(figure, $element);
+      $element.remove();
+    });
   }
   if (matchDomain(["newsroom.co.nz"])) {
     removeSelectors([".article_content__section", ".bio"]);
