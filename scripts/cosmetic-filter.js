@@ -12,7 +12,7 @@ window.addEventListener("DOMContentLoaded", function () {
       ".sics-component__caption__top-line",
       [
         ".sics-component__html-injector.sics-component__story__paragraph",
-        "READ MORE:",
+        "READ\\sMORE:",
       ],
     ]);
   }
@@ -29,7 +29,7 @@ window.addEventListener("DOMContentLoaded", function () {
       ".author__image",
       '.video-outer + figcaption',
       '[alt="Subscribe to Premium"]',
-      ["p > strong", "READ MORE:"],
+      ["p > strong", "READ\\sMORE:"],
     ]);
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
@@ -50,7 +50,15 @@ window.addEventListener("DOMContentLoaded", function () {
     });
   }
   if (matchDomain(["newsroom.co.nz"])) {
-    removeSelectors([".article_content__section", ".bio"]);
+    removeSelectors([
+      ".article_content__section",
+      ".bio",
+      '.c-cta-body',
+      '.articleTimes',
+      ["p", "What\\sdo\\syou\\sthink\\?\\sClick\\shere\\sto\\scomment\\."],
+      ["p > em > strong", "Today\\son\\sNewsroom\\sPro:"],
+      'hr + hr'
+    ]);
   }
   if (matchDomain(["newshub.co.nz"])) {
     removeSelectors([
