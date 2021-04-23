@@ -44,13 +44,15 @@ module.exports.getDetails = async (url) => {
 		window.setInterval = cb => cb();
 		const context = createContext(window);
 
+		new Script(`window.dispatchEvent(new window.Event('DOMContentLoaded'));`).runInContext(context);
+		await runScript('scripts/events-hack.js', context);
 		await runScript('vendor/bypass-paywalls-chrome/src/js/contentScript.js', context);
 		await runScript('scripts/lazyload.js', context);
 		await runScript('scripts/cosmetic-filter.js', context);
 		await runScript('scripts/fix-relative-links.js', context);
+		new Script(`window.dispatchEvent(new window.Event('DOMContentLoaded'));`).runInContext(context);
+		new Script(`window.__declutterTrigger('DOMContentLoaded');`).runInContext(context);
 
-		const script = new Script(`window.dispatchEvent(new window.Event('DOMContentLoaded'));`);
-		script.runInContext(context);
 		const html = context.document.querySelector('html').innerHTML;
 
 		const readable = await extractReadable(html, url);

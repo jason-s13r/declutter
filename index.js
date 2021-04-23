@@ -14,7 +14,7 @@ app.use(express.static('public'));
 
 app.get("/recent.json", async (_, res) => res.send(telegraph.keys().map((key) => telegraph.get(key))));
 
-app.use('/', headless.router());
+app.post('/', (req, res) => res.redirect(307, req.body.headless ? '/headless' : '/simple'));
 app.use('/headless', headless.router());
 app.use('/simple', simple.router());
 

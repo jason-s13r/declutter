@@ -14,10 +14,13 @@
 		<h2>Keep <em>only</em> what matters.</h2>
 		<img class="loading" src="/loading.svg" alt="loading..." width="200" height="200" />
 		<h3 class="error">ERROR</h3>
-		<form action="/" method="POST" accept-charset="UTF-8" autocomplete="off"><input name="url"
-				placeholder="Enter article link" pattern="^https?:\/\/(www\.)?.*" required /><button value="true"
-				name="redirect" type="submit">view</button>
-		</form>
+		<form action="/" method="POST" accept-charset="UTF-8" autocomplete="off">
+			<div
+				><input type="url" name="url" placeholder="Enter article link" pattern="^https?:\/\/(www\.)?.*" required
+				/><button value="true" name="redirect" type="submit">view</button
+			></div>
+			<input type="checkbox" name="headless" id="headless" value="true" /><label for="headless">Use headless browser (slow)</label>
+	</form>
 	</header>
 	<section class="submitted-links"></section>
 	<footer></footer>

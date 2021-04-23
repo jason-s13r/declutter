@@ -10,6 +10,7 @@
       },
       body: JSON.stringify({
         url: e.target.url.value,
+        headless: e.target.headless.checked ? true : undefined
       }),
     })
       .then((response) => {
@@ -45,5 +46,6 @@
     return;
   }
   document.querySelector('input[name="url"]').value = query.url;
+  document.querySelector('input[name="headless"]').value = !!query.headless;
   document.querySelector("button").click();
 })();
