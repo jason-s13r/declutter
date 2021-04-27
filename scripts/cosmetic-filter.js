@@ -30,6 +30,7 @@ window.addEventListener("DOMContentLoaded", function () {
       '.video-outer + figcaption',
       '[alt="Subscribe to Premium"]',
       ["p > strong", "READ\\sMORE:"],
+      'img.article-media__image[alt="one roof"]'
     ]);
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
