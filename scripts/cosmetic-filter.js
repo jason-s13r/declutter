@@ -20,6 +20,7 @@ window.addEventListener("DOMContentLoaded", function () {
     removeSelectors([
       "[href$='#commenting-widget']",
       ".related-articles",
+      '.article__heading-caption',
       ".article__print-button",
       ".share-bar",
       ".c-suggest-links.read-more-links",
