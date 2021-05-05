@@ -35,20 +35,7 @@ window.addEventListener("DOMContentLoaded", function () {
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
-    Array.from(document.querySelectorAll('div.photo-captioned'), $element => {
-      const $img = $element.querySelector('img');
-      if (!$img) {
-        return;
-      }
-      const $caption = $element.querySelector('.caption');
-      const figure = document.createElement('figure');
-      const figcaption = document.createElement('figcaption');
-      figcaption.innerHTML = $caption.innerHTML;
-      figure.appendChild($img);
-      figure.appendChild(figcaption);
-      $element.parentElement.insertBefore(figure, $element);
-      $element.remove();
-    });
+    fixCaptionedImages('div.photo-captioned', '.caption');
   }
   if (matchDomain(["newsroom.co.nz"])) {
     removeSelectors([
@@ -87,6 +74,7 @@ window.addEventListener("DOMContentLoaded", function () {
       ".addthis_sharing_toolbox",
       "#sponsor_post_footer",
     ]);
+    fixCaptionedImages('div.wp-caption', '.wp-caption-wrapper');
   }
   if (matchDomain(["odt.co.nz"])) {
     removeSelectors([
@@ -147,5 +135,25 @@ window.addEventListener("DOMContentLoaded", function () {
       });
       removeDOMElement(...elements);
     }, 500);
+  }
+
+  function fixCaptionedImages(wrapper, caption) {
+    Array.from(document.querySelectorAll(wrapper), $element => {
+      let $img = $element.querySelector('img');
+      if (!$img) {
+        return;
+      }
+      if ($img.parentElement.tagName === 'A') {
+        $img = $img.parentElement;
+      }
+      const $caption = $element.querySelector(caption);
+      const figure = document.createElement('figure');
+      const figcaption = document.createElement('figcaption');
+      figcaption.innerHTML = $caption.innerHTML;
+      figure.appendChild($img);
+      figure.appendChild(figcaption);
+      $element.parentElement.insertBefore(figure, $element);
+      $element.remove();
+    });
   }
 });
