@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", function () {
   }
   if (matchDomain(["rnz.co.nz", "radionz.co.nz"])) {
     removeSelectors([".c-advert-app", ".c-sub-nav"]);
-    fixCaptionedImages('div.photo-captioned', '.caption');
+    fixCaptionedImages('.photo-captioned', '.photo-captioned__information');
   }
   if (matchDomain(["newsroom.co.nz"])) {
     removeSelectors([
@@ -150,9 +150,12 @@ window.addEventListener("DOMContentLoaded", function () {
       const $caption = $element.querySelector(caption);
       const figure = document.createElement('figure');
       const figcaption = document.createElement('figcaption');
-      figcaption.innerHTML = $caption.innerHTML;
+
+      figcaption.innerHTML = $caption ? $caption.innerHTML : '';
       figure.appendChild($img);
-      figure.appendChild(figcaption);
+      if ($caption) {
+        figure.appendChild(figcaption);
+      }
       $element.parentElement.insertBefore(figure, $element);
       $element.remove();
     });
