@@ -9,7 +9,7 @@ module.exports.getLinkCodes = async (url) => {
   const key = crypto.createHash("sha256").update(url).digest("hex");
   const { userAgent, headers } = getUserAgent(url);
 
-  const browser = await firefox.launch({ args: [], headless: false });
+  const browser = await firefox.launch({ args: [], headless: true });
   const tab = await browser.newPage({
     extraHTTPHeaders: headers,
     userAgent,
