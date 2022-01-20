@@ -13,7 +13,7 @@ module.exports.getLinkCodes = async (url) => {
   const tab = await browser.newPage({
     extraHTTPHeaders: headers,
     userAgent,
-    viewport: { width: 1920, height: 4 * 1080 },
+    viewport: { width: 1024, height: 4 * 768 },
   });
 
   try {
