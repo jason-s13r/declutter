@@ -35,7 +35,7 @@ app.get('/_form', (_, res) => {
 		<div>${routes}</div >
 	</fieldset> `;
 	const prefixes = ['', '/headless', '/simple'];
-	const routes = ['/', '/telegraph', '/content', '/details', '/comments'];
+	const routes = ['/', '/telegraph', '/content', '/details', '/comments', '/link-codes'];
 
 	const html = prefixes.map(prefix => prefixHtml(prefix, routes.map(r => prefix + r).map(routeHtml).join('<hr />'))).join('');
 	res.send(html);
