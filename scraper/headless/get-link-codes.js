@@ -14,7 +14,7 @@ module.exports.getLinkCodes = async (url) => {
   const tab = await context.newPage({
     extraHTTPHeaders: headers,
     userAgent,
-    viewport: { width: 1024, height: 4 * 768 },
+    viewport: { width: 1024, height: 10 * 768 },
   });
 
   try {
