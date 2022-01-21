@@ -10,7 +10,10 @@ module.exports.getLinkCodes = async (url) => {
   const { userAgent, headers } = getUserAgent(url);
 
   const browser = await browserManager.getBrowser();
-  const context = await browser.newContext();
+  const context = await browser.newContext({
+    screen: { width: 1024, height: 10 * 768 },
+    viewport: { width: 1024, height: 10 * 768 },
+  });
   const tab = await context.newPage({
     extraHTTPHeaders: headers,
     userAgent,
