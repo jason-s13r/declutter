@@ -42,11 +42,6 @@ function getLinkCodes() {
   });
 
   const css = `
-[data-vending-machine] {
-  display: inline-block;
-  height: 1.3em;
-}
-
 [data-vending-machine]:after {
   content: attr(data-vending-machine);
   background: #fff;
