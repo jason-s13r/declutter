@@ -1,5 +1,4 @@
-const { firefox } = require("playwright");
-
+const { browserManager } = require('./browser-manager');
 const { getUserAgent } = require('../../utils/user-agent');
 const { blockedRegexes, matchUrlDomain } = require("../../utils/sites");
 const { extractReadable } = require('../../utils/extract-metadata');
@@ -7,8 +6,9 @@ const { extractReadable } = require('../../utils/extract-metadata');
 module.exports.getDetails = async (url) => {
 	const { userAgent, headers } = getUserAgent(url);
 
-	const browser = await firefox.launch({ args: [], headless: true });
-	const tab = await browser.newPage({
+	const browser = await browserManager.getBrowser();
+	const context = await browser.newContext();
+	const tab = await context.newPage({
 		extraHTTPHeaders: headers,
 		userAgent,
 		viewport: { width: 2000, height: 10000 },
@@ -38,6 +38,6 @@ module.exports.getDetails = async (url) => {
 		throw e;
 	} finally {
 		await tab.close();
-		await browser.close();
+		await context.close();
 	}
 };

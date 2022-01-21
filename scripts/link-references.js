@@ -1,4 +1,32 @@
 window.addEventListener("DOMContentLoaded", function () {
+  setTimeout(() => {
+    fixRelativeLinks();
+    getLinkCodes();
+  }, 500);
+});
+
+function fixRelativeLinks() {
+  const { host, protocol } = window.location;
+  const url = `${protocol}//${host}`;
+  [
+    ['[src^="/"]', "src"],
+    ['[href^="/"]', "href"],
+  ].forEach(([selector, attribute]) => {
+    Array.from(document.querySelectorAll(selector))
+      .filter(
+        (e) =>
+          e.attributes[attribute] &&
+          /^\/[^\/]/.test(e.attributes[attribute].value)
+      )
+      .forEach((e) => {
+        e.attributes[
+          attribute
+        ].value = `${url}${e.attributes[attribute].value}`;
+      });
+  });
+}
+
+function getLinkCodes() {
   const seen = [];
   const links = Array.from(document.querySelectorAll("a")).filter((link) => {
     if (link.href && !seen.includes(link.href)) {
@@ -9,7 +37,7 @@ window.addEventListener("DOMContentLoaded", function () {
   });
 
   links.forEach((link, index) => {
-    const key = index.toString("16").toUpperCase().padStart(2, "0");
+    const key = index.toString(16).toUpperCase().padStart(2, "0");
     link.dataset.vendingMachine = key;
   });
 
@@ -41,4 +69,4 @@ window.addEventListener("DOMContentLoaded", function () {
     map[key] = link.href;
     return map;
   }, {});
-});
+}

@@ -1,6 +1,6 @@
-const { firefox } = require("playwright");
 const crypto = require("crypto");
 
+const { browserManager } = require("./browser-manager");
 const { getUserAgent } = require("../../utils/user-agent");
 // const { blockedRegexes, matchUrlDomain } = require("../../utils/sites");
 // const { extractReadable } = require("../../utils/extract-metadata");
@@ -9,8 +9,9 @@ module.exports.getLinkCodes = async (url) => {
   const key = crypto.createHash("sha256").update(url).digest("hex");
   const { userAgent, headers } = getUserAgent(url);
 
-  const browser = await firefox.launch({ args: [], headless: true });
-  const tab = await browser.newPage({
+  const browser = await browserManager.getBrowser();
+  const context = await browser.newContext();
+  const tab = await context.newPage({
     extraHTTPHeaders: headers,
     userAgent,
     viewport: { width: 1024, height: 4 * 768 },
@@ -46,6 +47,6 @@ module.exports.getLinkCodes = async (url) => {
     throw e;
   } finally {
     await tab.close();
-    await browser.close();
+    await context.close();
   }
 };
