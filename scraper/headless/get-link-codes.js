@@ -13,6 +13,7 @@ module.exports.getLinkCodes = async (url) => {
   const context = await browser.newContext({
     screen: { width: 1024, height: 10 * 768 },
     viewport: { width: 1024, height: 10 * 768 },
+    bypassCSP: true,
   });
   const tab = await context.newPage({
     extraHTTPHeaders: headers,

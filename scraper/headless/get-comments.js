@@ -15,6 +15,7 @@ module.exports.getComments = async (url) => {
 		extraHTTPHeaders: headers,
 		userAgent,
 		viewport: { width: 2000, height: 10000 },
+		bypassCSP: true,
 	});
 
 	try {
