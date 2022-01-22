@@ -26,7 +26,7 @@
     "metascraper-title": "^5.15.0",
     "metascraper-url": "^5.15.0",
     "node-cache": "^5.1.2",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "playwright": "^1.6.2",
     "sanitize-html": "^2.2.0",
     "turndown": "^7.0.0",
