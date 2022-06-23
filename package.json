@@ -13,7 +13,7 @@
     "body-parser": "^1.19.0",
     "dompurify": "^2.2.3",
     "express": "^4.17.1",
-    "jsdom": "^15.1.1",
+    "jsdom": "^16.5.0",
     "metascraper": "^5.15.0",
     "metascraper-author": "^5.15.0",
     "metascraper-date": "^5.15.0",
